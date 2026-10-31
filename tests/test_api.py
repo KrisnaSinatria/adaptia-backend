@@ -215,6 +215,18 @@ def test_full_flow_from_student_to_lecturer_decision_persists(client, student, l
     assert mine["score"] == final["score"] and mine["note"] == detail["note"]
 
 
+def test_new_attempt_recommendation_ignores_seed_archetype(client, student, lecturer, db):
+    from app.seed import load_seed
+    need = load_seed()["need"]
+    aid, _ = submitted_attempt(client, student)  # mode skrip: semua indikator "sebagian"
+    rec = client.get(f"/api/attempts/{aid}", headers=lecturer).json()["recommendation"]
+    assert rec["need"] == "pemantauan"
+    assert rec["activityId"] in {n["activity"] for n in need.values() if n["need"] == "pemantauan"}
+    seeded = next(a for a in db.tables["attempts"] if a["student_id"] == "nadia" and a["session_id"] == "operasi-stack")
+    seeded_rec = client.get(f"/api/attempts/{seeded['id']}", headers=lecturer).json()["recommendation"]
+    assert seeded_rec["activityId"] == need["terapan"]["activity"]
+
+
 def test_decision_recomputes_score(client, lecturer, db):
     nadia = next(a for a in db.tables["attempts"] if a["student_id"] == "nadia")
     assert nadia["score"] == 68
@@ -259,7 +271,7 @@ def test_assignments_list_and_create(client, lecturer):
         "activityId": "mi-telusur", "studentIds": ["nadia", "bagas"], "start": "2 Nov 2026, 08.00",
         "due": "5 Nov 2026, 23.59", "mode": "Mandiri"}).json()
     assert res["activityId"] == "mi-telusur" and res["studentIds"] == ["nadia", "bagas"] and res["state"] == "pelaksanaan"
-    assert res["id"] not in {"pd-12", "pd-11", "pd-09"}
+    assert res["id"] == "pd-13"
     bad = client.post("/api/assignments", headers=lecturer, json={
         "activityId": "mi-telusur", "studentIds": ["siapa"], "start": "a", "due": "b", "mode": "Mandiri"})
     assert bad.json()["error"]["code"] == "unknown_students"

@@ -31,12 +31,9 @@ def create_assignment(body: AssignmentIn, _: dict = Depends(require_lecturer), d
     missing = [i for i in ids if i not in found]
     if missing:
         raise ApiError(422, "unknown_students", f"Mahasiswa tidak ditemukan: {', '.join(missing)}")
-    taken = {a["id"] for a in repo.list_assignments(db)}
-    n = len(taken) + 1
-    while f"pd-{n:02d}" in taken:
-        n += 1
+    numbers = [int(a["id"][3:]) for a in repo.list_assignments(db) if a["id"][3:].isdigit()]
     row = repo.insert_assignment(db, {
-        "id": f"pd-{n:02d}", "title": activity["title"], "activity_id": activity["id"], "student_ids": ids,
+        "id": f"pd-{max(numbers, default=0) + 1:02d}", "title": activity["title"], "activity_id": activity["id"], "student_ids": ids,
         "start": body.start, "due": body.due, "mode": body.mode, "state": "pelaksanaan", "done": 0,
     })
     return camel(row)

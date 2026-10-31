@@ -37,8 +37,11 @@ def attempt_detail(attempt_id: str, user: dict = Depends(current_user), db=Depen
     student = repo.get_student(db, attempt["student_id"])
     indicators = repo.get_indicators(db, attempt["session_id"])
     statuses = attempt_statuses(attempt)
+    # Archetype seed hanya menggambarkan percobaan seed (yang tidak pernah dianalisis server);
+    # percobaan baru direkomendasikan dari statusnya sendiri.
+    archetype = student.get("archetype") if attempt.get("analyst") is None else None
     recommendation = (
-        recommend_activity(statuses, indicators, seed_config()["need"], student.get("archetype"))
+        recommend_activity(statuses, indicators, seed_config()["need"], archetype)
         if attempt["findings"] else None
     )
     return {
