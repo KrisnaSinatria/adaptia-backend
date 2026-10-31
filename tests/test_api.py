@@ -239,6 +239,20 @@ def test_trend_matches_seed_trend(client, lecturer):
     assert client.get("/api/classes/if203b/trend", headers=lecturer).json() == load_seed()["trend"]
 
 
+def test_running_session_stays_out_of_trend(client, student, lecturer):
+    from app.seed import load_seed
+    submitted_attempt(client, student)
+    assert client.get("/api/classes/if203b/trend", headers=lecturer).json() == load_seed()["trend"]
+
+
+def test_lecturer_correction_moves_trend(client, lecturer, db):
+    nadia = next(a for a in db.tables["attempts"] if a["student_id"] == "nadia")
+    client.post(f"/api/attempts/{nadia['id']}/decisions", headers=lecturer,
+                json={"indicator": "i4", "decision": "correct", "status": "terpenuhi"})
+    values = client.get("/api/classes/if203b/trend", headers=lecturer).json()["values"]
+    assert values[:4] == [58, 63, 61, 67] and values[4] >= 71
+
+
 def test_assignments_list_and_create(client, lecturer):
     assert len(client.get("/api/assignments", headers=lecturer).json()) == 3
     res = client.post("/api/assignments", headers=lecturer, json={

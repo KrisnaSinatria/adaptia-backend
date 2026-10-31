@@ -45,7 +45,8 @@ def create_assignment(body: AssignmentIn, _: dict = Depends(require_lecturer), d
 @router.get("/classes/{class_id}/trend")
 def class_trend(class_id: str, _: dict = Depends(require_lecturer), db=Depends(get_db)):
     repo.get_class(db, class_id)
-    sessions = repo.list_sessions(db, [class_id])
+    # Sesi yang masih berlangsung tidak masuk tren: rata-rata dari segelintir pengumpul pertama menyesatkan.
+    sessions = [s for s in repo.list_sessions(db, [class_id]) if s["state"] != "berlangsung"]
     students = repo.list_students(db, class_id=class_id)
     for s in sessions:
         attempts = repo.list_attempts(db, session_id=s["id"])
