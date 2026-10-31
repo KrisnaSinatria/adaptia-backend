@@ -8,9 +8,11 @@ router = APIRouter(tags=["demo"])
 
 @router.get("/health")
 def health():
+    # Sengaja tanpa Depends(get_db): health harus tetap menjawab saat database belum dikonfigurasi.
     try:
         get_db().table("classes").select("id").limit(1).execute()
         db = "ok"
     except Exception:
         db = "error"
-    return {"ok": db == "ok", "db": db, "llmMode": get_settings().llm_mode}
+    s = get_settings()
+    return {"ok": db == "ok", "db": db, "llmMode": "live" if s.llm_live else "scripted"}

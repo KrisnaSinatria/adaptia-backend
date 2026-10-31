@@ -7,6 +7,25 @@ tes emas (tests/test_golden.py) memastikan keduanya memberi hasil yang sama.
 
 import math
 import re
+from datetime import date
+
+MONTHS = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "mei": 5, "jun": 6, "jul": 7, "agu": 8, "agt": 8,
+          "sep": 9, "okt": 10, "nov": 11, "des": 12}
+
+
+def parse_due(text: str | None) -> date | None:
+    """Tanggal gaya data.ts, misalnya "28 Okt 2026" atau "6 Nov 2026, 23.59 WIB"."""
+    m = re.match(r"\s*(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\s+(\d{4})", text or "")
+    if not m or m.group(2).lower() not in MONTHS:
+        return None
+    return date(int(m.group(3)), MONTHS[m.group(2).lower()], int(m.group(1)))
+
+
+def trend_of(sessions: list[dict]) -> dict:
+    """Rata-rata kelas per sesi yang sudah punya nilai, urut tanggal."""
+    points = sorted(((parse_due(s["due"]), s["avg"]) for s in sessions if s.get("avg") is not None and parse_due(s["due"])))
+    labels = [f"{d.day} {next(k for k, v in MONTHS.items() if v == d.month).capitalize()}" for d, _ in points]
+    return {"labels": labels, "values": [v for _, v in points]}
 
 
 def norm(s: str) -> str:
@@ -45,6 +64,28 @@ def score_of(statuses: dict, indicators: list) -> int:
 
 def shown_statuses(findings: list, transcript: str) -> dict:
     return {f["indicator"]: shown_status(f, transcript) for f in findings}
+
+
+def summary_of(statuses: dict, indicators: list) -> str:
+    """Ringkasan deterministik dari status per indikator, tanpa LLM."""
+    met = [i for i in indicators if statuses.get(i["id"]) == "terpenuhi"]
+    weak = [i["name"] for i in indicators if statuses.get(i["id"]) in ("sebagian", "belum")]
+    unclear = sum(1 for i in indicators if statuses.get(i["id"]) == "ambigu")
+    parts = [f"{len(met)} dari {len(indicators)} indikator terpenuhi."]
+    if weak:
+        parts.append("Perlu diperjelas: " + "; ".join(weak) + ".")
+    if unclear:
+        parts.append(f"{unclear} temuan perlu pemeriksaan tambahan.")
+    return " ".join(parts)
+
+
+def trap_misconception(dialog: list, traps_by_id: dict) -> str | None:
+    """Hasil jebakan dicatat aturan: menyetujui pernyataan keliru memunculkan miskonsepsi dari bank."""
+    for i, t in enumerate(dialog):
+        if t.get("trap") and i + 1 < len(dialog) and dialog[i + 1].get("choice") == "Setuju":
+            trap = traps_by_id.get(t.get("trapId"))
+            return (trap or {}).get("misconception") or "Menyetujui pernyataan keliru Boby."
+    return None
 
 
 SUBMITTED_STATES = ("perlu", "selesai", "kurang")
@@ -89,6 +130,32 @@ def roster_summary(rows: list[dict]) -> dict:
         "avg": math.floor(sum(scores) / len(scores) + 0.5) if scores else None,
         "scoredCount": len(scores),
     }
+
+
+def recommend_activity(statuses: dict, indicators: list, need: dict, archetype: str | None = None) -> dict:
+    """Peta konsep lemah ke satu kegiatan dari bank `need`, tanpa LLM.
+
+    Data seed membawa archetype yang langsung menunjuk entri `need`. Untuk percobaan baru:
+    entri penguatan pertama yang konsepnya lemah (belum), lalu entri pemantauan (sebagian/ambigu),
+    lalu entri tanpa kebutuhan.
+    """
+    if archetype in need:
+        key = archetype
+    else:
+        concept_status = {i["concept"]: statuses.get(i["id"]) for i in indicators}
+        weak = {c for c, s in concept_status.items() if s == "belum"}
+        watch = {c for c, s in concept_status.items() if s in ("sebagian", "ambigu")}
+        key = (
+            next((k for k, n in need.items() if n["need"] == "penguatan" and weak & set(n["concepts"])), None)
+            or next((k for k, n in need.items() if n["need"] == "penguatan" and weak), None)
+            or next((k for k, n in need.items() if n["need"] == "pemantauan" and watch & set(n["concepts"])), None)
+            or next((k for k, n in need.items() if n["need"] == "pemantauan" and watch), None)
+            or next((k for k, n in need.items() if n["need"] == "tidak"), None)
+        )
+    if key is None:
+        return {"need": "tidak", "concepts": [], "activityId": None}
+    entry = need[key]
+    return {"need": entry["need"], "concepts": entry["concepts"], "activityId": entry["activity"]}
 
 
 def decided_statuses(ai_statuses: dict, decisions: dict, corrections: dict) -> dict:

@@ -17,10 +17,15 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = 6.0
 
     allowed_origins: str = "http://localhost:5173"
+    rate_limit_enabled: bool = True
 
     @property
     def origins(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
+
+    @property
+    def llm_live(self) -> bool:
+        return self.llm_mode == "live" and bool(self.anthropic_api_key) and bool(self.llm_model)
 
 
 @lru_cache

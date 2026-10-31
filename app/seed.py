@@ -4,6 +4,7 @@ Dipakai juga oleh POST /demo/reset supaya kondisi awal demo selalu sama.
 """
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 from app.logic import score_of, shown_statuses, transcript_of
@@ -27,6 +28,12 @@ def load_seed(path: Path = SEED_PATH) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+@lru_cache
+def seed_config() -> dict:
+    """Seed sebagai konfigurasi statis (akun demo, peta `need`) yang tidak disimpan di tabel."""
+    return load_seed()
+
+
 def load_drafts(path: Path = DRAFTS_PATH) -> dict:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
@@ -45,6 +52,7 @@ def _trap_rows(seed, drafts):
     rows = []
     for t in seed["traps"]:
         row = {k: t[k] for k in ("id", "topic", "statement", "misconception", "correction_key", "indicator")}
+        row["active"] = t.get("active", True)
         # Nilai dari data.ts menang; draf hanya mengisi yang masih null.
         for k, v in drafts.get("traps", {}).get(t["id"], {}).items():
             if row.get(k) is None:
