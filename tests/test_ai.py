@@ -156,7 +156,7 @@ def _llm_answer(prompt, fake_quote_for=None):
 def test_submit_with_model_verifies_quotes_and_caches(client, student, live, monkeypatch, db):
     calls = []
 
-    def fake_json(kind, prompt, schema, max_tokens=2000):
+    def fake_json(kind, prompt, schema, max_tokens=1600, model=None):
         calls.append(kind)
         return _llm_answer(prompt, fake_quote_for="q2")
 
@@ -202,7 +202,7 @@ def test_empty_quote_is_only_valid_for_no_evidence():
 
 def test_analyst_prompt_carries_trap_correction_key(live, monkeypatch):
     prompts = []
-    monkeypatch.setattr(llm, "complete_json", lambda kind, prompt, schema, max_tokens=1600: prompts.append(prompt))
+    monkeypatch.setattr(llm, "complete_json", lambda kind, prompt, schema, max_tokens=1600, model=None: prompts.append(prompt))
     attempt = {"code": "x", "explain": "", "dialog": [], "answers": []}
     analyst.llm_findings(attempt, INDICATORS, {"correction_key": "Queue itu FIFO.", "indicator": "q3"})
     assert "Queue itu FIFO." in prompts[0] and "q3" in prompts[0]
@@ -223,11 +223,20 @@ def test_analyst_retries_once_then_falls_back(client, student, live, monkeypatch
     assert res.json()["analyst"] == "fallback" and len(calls) == 2
 
 
+def test_analyst_tries_analyst_model_twice_then_boby_model(live, monkeypatch):
+    monkeypatch.setattr(get_settings(), "llm_analyst_model", "model-analis")
+    models = []
+    monkeypatch.setattr(llm, "complete_json", lambda *a, model=None, **k: models.append(model))
+    attempt = {"code": "x", "explain": "", "dialog": [], "answers": []}
+    assert analyst.llm_findings(attempt, INDICATORS) is None
+    assert models == ["model-analis", "model-analis", "model-tes"]
+
+
 def test_analyst_recovers_on_retry(client, student, live, monkeypatch):
     answers = iter([None])
     monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa?")
     monkeypatch.setattr(llm, "complete_json",
-                        lambda kind, prompt, schema, max_tokens=2000: next(answers, _llm_answer(prompt)))
+                        lambda kind, prompt, schema, max_tokens=1600, model=None: next(answers, _llm_answer(prompt)))
     _, res = submitted_attempt(client, student)
     assert res.json()["analyst"] == "llm"
 

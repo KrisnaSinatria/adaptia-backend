@@ -10,6 +10,7 @@ import re
 from pydantic import BaseModel, ValidationError
 
 from app import llm
+from app.config import get_settings
 from app.logic import norm, student_parts, transcript_of
 from app.models import Stage, Status
 
@@ -150,11 +151,18 @@ def llm_findings(attempt: dict, indicators: list[dict], trap: dict | None = None
                         ensure_ascii=False)
     prompt = PROMPT.format(indicators_json=rubric, trap_context=trap_context(trap),
                            transcript=llm.fence(labeled_transcript(attempt)))
-    for _ in range(2):  # JSON rusak: ulangi sekali
-        found = parse(llm.complete_json("analyst", prompt, schema(ids)), ids)
+    for model in analyst_models():
+        found = parse(llm.complete_json("analyst", prompt, schema(ids), model=model), ids)
         if found is not None:
             return ground(found, attempt)
     return None
+
+
+def analyst_models() -> list[str]:
+    """Model analis, ulang sekali (Groq sesekali menolak JSON-nya sendiri: json_validate_failed),
+    lalu model Boby sebagai cadangan terakhir karena kuota tokennya terpisah."""
+    s = get_settings()
+    return [s.analyst_model, s.analyst_model] + ([s.llm_model] if s.llm_model != s.analyst_model else [])
 
 
 # ---- Analis cadangan: aturan kata kunci, tanpa LLM ----

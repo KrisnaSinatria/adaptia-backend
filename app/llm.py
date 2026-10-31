@@ -52,7 +52,11 @@ def _call(kind: str, prompt: str, max_tokens: int, temperature: float, model: st
     except groq.APITimeoutError:
         log.warning("llm kind=%s timeout latency_ms=%d", kind, (time.monotonic() - start) * 1000)
     except groq.APIError as exc:
-        log.warning("llm kind=%s error=%s latency_ms=%d", kind, type(exc).__name__, (time.monotonic() - start) * 1000)
+        # Hanya kode galat; isi galat (mis. failed_generation) bisa memuat tulisan mahasiswa.
+        body = getattr(exc, "body", None)
+        code = (body.get("error") or {}).get("code") if isinstance(body, dict) else None
+        log.warning("llm kind=%s model=%s error=%s code=%s latency_ms=%d", kind, model, type(exc).__name__, code,
+                    (time.monotonic() - start) * 1000)
     return None
 
 
@@ -61,10 +65,11 @@ def complete_text(kind: str, prompt: str, max_tokens: int = 400) -> str | None:
     return _call(kind, prompt, max_tokens, temperature=0.7, model=get_settings().llm_model)
 
 
-def complete_json(kind: str, prompt: str, schema: dict, max_tokens: int = 1600) -> dict | None:
+def complete_json(kind: str, prompt: str, schema: dict, max_tokens: int = 1600, model: str | None = None) -> dict | None:
     """Keluaran terstruktur (strict). None bila model tidak dipakai, gagal, atau JSON rusak."""
     fmt = {"type": "json_schema", "json_schema": {"name": kind, "strict": True, "schema": schema}}
-    text = _call(kind, prompt, max_tokens, temperature=0.0, model=get_settings().analyst_model, response_format=fmt)
+    model = model or get_settings().analyst_model
+    text = _call(kind, prompt, max_tokens, temperature=0.0, model=model, response_format=fmt)
     if text is None:
         return None
     try:
