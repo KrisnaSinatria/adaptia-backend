@@ -1,0 +1,364 @@
+{
+  "summary": {
+    "perlu": 8,
+    "selesai": 20,
+    "kurang": 2,
+    "belum": 5,
+    "submitted": 30,
+    "pendingFindings": 32,
+    "avg": 71,
+    "scoredCount": 28
+  },
+  "students": [
+    {
+      "id": "nadia",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "bagas",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "ambigu",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 87
+    },
+    {
+      "id": "citra",
+      "state": "perlu",
+      "statuses": {
+        "i1": "sebagian",
+        "i2": "belum",
+        "i3": "belum",
+        "i4": "sebagian"
+      },
+      "score": 25
+    },
+    {
+      "id": "dimas",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "eka",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "fajar",
+      "state": "perlu",
+      "statuses": {
+        "i1": "sebagian",
+        "i2": "belum",
+        "i3": "belum",
+        "i4": "sebagian"
+      },
+      "score": 25
+    },
+    {
+      "id": "gita",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "hendra",
+      "state": "perlu",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "indah",
+      "state": "kurang",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "joko",
+      "state": "kurang",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "kirana",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "lukman",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "maya",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "naufal",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "oktaviani",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "putu",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "qori",
+      "state": "selesai",
+      "statuses": {
+        "i1": "sebagian",
+        "i2": "belum",
+        "i3": "belum",
+        "i4": "sebagian"
+      },
+      "score": 25
+    },
+    {
+      "id": "rizky",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "salsabila",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "taufik",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "ulfa",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "vino",
+      "state": "selesai",
+      "statuses": {
+        "i1": "sebagian",
+        "i2": "belum",
+        "i3": "belum",
+        "i4": "sebagian"
+      },
+      "score": 25
+    },
+    {
+      "id": "wahyu",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "yasmin",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "zaki",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "ayu",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "sebagian",
+        "i4": "belum"
+      },
+      "score": 68
+    },
+    {
+      "id": "bima",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "clara",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "terpenuhi",
+        "i3": "terpenuhi",
+        "i4": "terpenuhi"
+      },
+      "score": 100
+    },
+    {
+      "id": "dewa",
+      "state": "selesai",
+      "statuses": {
+        "i1": "sebagian",
+        "i2": "belum",
+        "i3": "belum",
+        "i4": "sebagian"
+      },
+      "score": 25
+    },
+    {
+      "id": "elisa",
+      "state": "selesai",
+      "statuses": {
+        "i1": "terpenuhi",
+        "i2": "sebagian",
+        "i3": "terpenuhi",
+        "i4": "sebagian"
+      },
+      "score": 78
+    },
+    {
+      "id": "farhan",
+      "state": "belum",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "galih",
+      "state": "belum",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "hana",
+      "state": "belum",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "ilham",
+      "state": "belum",
+      "statuses": {},
+      "score": null
+    },
+    {
+      "id": "jessica",
+      "state": "belum",
+      "statuses": {},
+      "score": null
+    }
+  ]
+}

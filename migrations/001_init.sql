@@ -18,7 +18,9 @@ create table students (
   name text not null,
   nim text not null,
   initials text,
-  class_id text references classes(id) on delete cascade
+  class_id text references classes(id) on delete cascade,
+  prev int,          -- skor sesi sebelumnya, untuk tren per mahasiswa
+  archetype text     -- kunci ke peta `need` untuk rekomendasi kegiatan pada data seed
 );
 
 create table sessions (
@@ -31,7 +33,13 @@ create table sessions (
   state text,
   instruction text,
   goal text,
-  penerapan jsonb not null default '[]'
+  penerapan jsonb not null default '[]',
+  boby_script jsonb not null default '[]',  -- skrip cadangan Boby bila LLM gagal
+  -- Ringkasan statis untuk sesi riwayat; roster sesi aktif dihitung langsung dari attempts.
+  submitted int,
+  enrolled int,
+  avg int,
+  pending int
 );
 
 create table indicators (
@@ -91,6 +99,7 @@ create table activities (
 
 create table assignments (
   id text primary key,
+  title text,
   activity_id text references activities(id) on delete cascade,
   student_ids jsonb not null default '[]',
   start text,

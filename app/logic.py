@@ -47,6 +47,50 @@ def shown_statuses(findings: list, transcript: str) -> dict:
     return {f["indicator"]: shown_status(f, transcript) for f in findings}
 
 
+SUBMITTED_STATES = ("perlu", "selesai", "kurang")
+
+
+def pending_of(attempt: dict) -> int:
+    """Temuan yang masih menunggu keputusan dosen; hanya ada pada percobaan berstatus perlu."""
+    if attempt["state"] != "perlu":
+        return 0
+    decisions = attempt.get("decisions") or {}
+    return sum(1 for f in attempt.get("findings") or [] if f["indicator"] not in decisions)
+
+
+def attempt_statuses(attempt: dict) -> dict:
+    """Status per indikator yang ditampilkan: hasil pemverifikasi, lalu keputusan dosen."""
+    findings = attempt.get("findings") or []
+    if not findings:
+        return {}
+    ai = shown_statuses(findings, transcript_of(attempt))
+    return decided_statuses(ai, attempt.get("decisions") or {}, attempt.get("corrections") or {})
+
+
+def roster_row(student: dict, attempt: dict | None) -> dict:
+    if attempt is None:
+        return {"id": student["id"], "name": student["name"], "nim": student["nim"], "state": "belum",
+                "score": None, "summary": "", "pending": 0, "statuses": {}}
+    return {
+        "id": student["id"], "name": student["name"], "nim": student["nim"],
+        "state": attempt["state"], "score": attempt.get("score"), "summary": attempt.get("summary") or "",
+        "pending": pending_of(attempt), "statuses": attempt_statuses(attempt),
+    }
+
+
+def roster_summary(rows: list[dict]) -> dict:
+    """rows: satu per mahasiswa dengan kunci state, score, pending."""
+    scores = [r["score"] for r in rows if r["score"] is not None]
+    count = {st: sum(1 for r in rows if r["state"] == st) for st in ("perlu", "selesai", "kurang", "belum")}
+    return {
+        **count,
+        "submitted": sum(1 for r in rows if r["state"] in SUBMITTED_STATES),
+        "pendingFindings": sum(r["pending"] for r in rows),
+        "avg": math.floor(sum(scores) / len(scores) + 0.5) if scores else None,
+        "scoredCount": len(scores),
+    }
+
+
 def decided_statuses(ai_statuses: dict, decisions: dict, corrections: dict) -> dict:
     """Status setelah tinjauan dosen: koreksi menang, temuan ditolak tidak dihitung.
 

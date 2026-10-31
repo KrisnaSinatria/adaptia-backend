@@ -1,38 +1,21 @@
-"""Muat seed/seed.json ke Supabase.  Jalankan: python -m app.seed
+"""Muat seed/seed.json (ekspor src/lib/data.ts) ke Supabase.  Jalankan: python -m app.seed
 
 Dipakai juga oleh POST /demo/reset supaya kondisi awal demo selalu sama.
 """
 
 import json
-import re
 from pathlib import Path
 
 from app.logic import score_of, shown_statuses, transcript_of
 
 SEED_PATH = Path(__file__).resolve().parents[1] / "seed" / "seed.json"
 
-# Kolom tiap tabel; kunci camelCase dari seed dipetakan ke snake_case dan sisanya dibuang.
-COLUMNS = {
-    "classes": ["id", "code", "name", "group", "join_code", "material", "enrolled"],
-    "students": ["id", "name", "nim", "initials", "class_id"],
-    "sessions": ["id", "title", "class_id", "type", "format", "due", "state", "instruction", "goal", "penerapan"],
-    "indicators": ["id", "session_id", "name", "concept", "weight", "position"],
-    "traps": ["id", "topic", "statement", "misconception", "correction_key", "indicator", "active"],
-    "activities": ["id", "title", "kind", "concepts", "minutes", "level", "goal", "steps", "outcome", "active"],
-    "assignments": ["id", "activity_id", "student_ids", "start", "due", "mode", "state", "done"],
-}
+# Roster 35 mahasiswa dan rubrik i1–i4 di data.ts milik sesi asesmen awal "Operasi Stack".
+ROSTER_SESSION = "operasi-stack"
+STACK_TASK_SESSION = "operasi-stack"
 
-# Urutan hapus (anak dulu) dan urutan isi (induk dulu).
-INSERT_ORDER = ["classes", "students", "sessions", "indicators", "traps", "activities", "assignments", "attempts"]
-
-
-def snake(key: str) -> str:
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", key).lower()
-
-
-def pick(entry: dict, table: str) -> dict:
-    flat = {snake(k): v for k, v in entry.items()}
-    return {c: flat[c] for c in COLUMNS[table] if c in flat}
+# Urutan isi (induk dulu); hapus memakai urutan terbalik.
+TABLES = ["classes", "students", "sessions", "indicators", "traps", "activities", "assignments", "attempts"]
 
 
 def load_seed(path: Path = SEED_PATH) -> dict:
@@ -41,53 +24,99 @@ def load_seed(path: Path = SEED_PATH) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def attempt_row(student: dict, indicators_by_session: dict) -> dict:
+def _class_rows(seed):
+    return [
+        {"id": c["id"], "code": c["code"], "name": c["name"], "group": c["group"],
+         "join_code": c["joinCode"], "material": c["material"], "enrolled": c["enrolled"]}
+        for c in seed["classes"]
+    ]
+
+
+def _session_rows(seed):
+    tasks = {STACK_TASK_SESSION: seed["stackTask"], seed["queueTask"]["id"]: seed["queueTask"]}
+    rows = []
+    for s in seed["sessions"]:
+        task = tasks.get(s["id"], {})
+        rows.append({
+            "id": s["id"], "title": s["title"], "class_id": s["classId"], "type": s["type"],
+            "format": s["format"], "due": s["due"], "state": s["state"],
+            "instruction": task.get("instruction"), "goal": task.get("goal"),
+            "penerapan": task.get("penerapan", []), "boby_script": task.get("boby", []),
+            "submitted": s["submitted"], "enrolled": s["enrolled"], "avg": s["avg"], "pending": s["pending"],
+        })
+    return rows
+
+
+def _student_rows(seed, class_id):
+    return [
+        {"id": st["id"], "name": st["name"], "nim": st["nim"],
+         "initials": "".join(w[0] for w in st["name"].split()[:2]).upper(),
+         "class_id": class_id, "prev": st.get("prev"), "archetype": st.get("archetype")}
+        for st in seed["students"]
+    ]
+
+
+def _attempt_row(student, indicators):
     ev = student["evidence"]
-    session_id = ev["sessionId"]
-    transcript = transcript_of(ev)
-    statuses = shown_statuses(ev["findings_raw"], transcript)
+    base = {"session_id": ROSTER_SESSION, "student_id": student["id"], "state": student["state"]}
+    if ev is None:
+        # "kurang": sudah mengumpulkan tetapi tidak lengkap, jadi tetap punya percobaan tanpa bukti.
+        return {**base, "score": None}
+    statuses = shown_statuses(ev["findings_raw"], transcript_of(ev))
     return {
-        "session_id": session_id,
-        "student_id": student["id"],
-        "state": ev["state"],
-        "code": ev["code"],
-        "explain": ev["explain"],
-        "dialog": ev["dialog"],
-        "answers": ev["answers"],
-        "findings": ev["findings_raw"],
-        "misconception": ev.get("misconception"),
-        "summary": ev.get("summary", ""),
-        "score": score_of(statuses, indicators_by_session[session_id]),
-        "decisions": ev.get("decisions", {}),
-        "corrections": ev.get("corrections", {}),
-        "note": ev.get("note", ""),
-        "reviewed_at": ev.get("reviewedAt"),
+        **base,
+        "code": ev["code"], "explain": ev["explain"], "dialog": ev["dialog"], "answers": ev["answers"],
+        "findings": ev["findings_raw"], "misconception": ev.get("misconception"),
+        "summary": ev.get("summary", ""), "score": score_of(statuses, indicators),
     }
 
 
-def build_rows(seed: dict) -> dict[str, list[dict]]:
-    rows = {t: [pick(e, t) for e in seed.get(t, [])] for t in COLUMNS}
-    for pos, ind in enumerate(rows["indicators"]):
-        ind["position"] = pos
-
-    by_session: dict[str, list[dict]] = {}
-    for ind in rows["indicators"]:
-        by_session.setdefault(ind["session_id"], []).append(ind)
-
-    rows["attempts"] = [attempt_row(s, by_session) for s in seed["students"] if s.get("evidence")]
+def _assignment_rows(seed):
+    ids_by_name = {st["name"]: st["id"] for st in seed["students"]}
+    rows = []
+    for a in seed["assignments"]:
+        missing = [n for n in a["students"] if n not in ids_by_name]
+        if missing:
+            raise ValueError(f"Penugasan {a['id']} merujuk mahasiswa yang tidak ada: {missing}")
+        rows.append({
+            "id": a["id"], "title": a["title"], "activity_id": a["activity"],
+            "student_ids": [ids_by_name[n] for n in a["students"]],
+            "start": a["start"], "due": a["due"], "mode": a["mode"], "state": a["state"], "done": a["done"],
+        })
     return rows
+
+
+def build_rows(seed: dict) -> dict[str, list[dict]]:
+    roster_class = next(s["classId"] for s in seed["sessions"] if s["id"] == ROSTER_SESSION)
+    indicators = [
+        {"id": i["id"], "session_id": ROSTER_SESSION, "name": i["name"], "concept": i["concept"],
+         "weight": i["weight"], "position": pos}
+        for pos, i in enumerate(seed["indicators"])
+    ]
+    return {
+        "classes": _class_rows(seed),
+        "students": _student_rows(seed, roster_class),
+        "sessions": _session_rows(seed),
+        "indicators": indicators,
+        "traps": [{k: t[k] for k in ("id", "topic", "statement", "misconception", "correction_key", "indicator")}
+                  for t in seed["traps"]],
+        "activities": [{k: a[k] for k in ("id", "title", "kind", "concepts", "minutes", "level", "goal",
+                                          "steps", "outcome", "active")} for a in seed["activities"]],
+        "assignments": _assignment_rows(seed),
+        "attempts": [_attempt_row(st, seed["indicators"]) for st in seed["students"] if st["state"] != "belum"],
+    }
 
 
 def reset_database(db, seed: dict | None = None) -> dict[str, int]:
     rows = build_rows(seed or load_seed())
     # attempts memakai uuid; tabel lain memakai id text. analysis_cache sengaja dipertahankan.
     db.table("attempts").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-    for table in reversed(INSERT_ORDER[:-1]):
+    for table in reversed(TABLES[:-1]):
         db.table(table).delete().neq("id", "").execute()
-    for table in INSERT_ORDER:
+    for table in TABLES:
         if rows[table]:
             db.table(table).insert(rows[table]).execute()
-    return {t: len(rows[t]) for t in INSERT_ORDER}
+    return {t: len(rows[t]) for t in TABLES}
 
 
 if __name__ == "__main__":

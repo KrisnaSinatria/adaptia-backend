@@ -40,11 +40,20 @@ Belum: login demo, alur mahasiswa, Boby, analis, endpoint dosen, deploy.
 
 ## Asumsi yang dicatat
 
-- `seed/seed.json` dan `seed/golden.json` diekspor dari `data.ts` frontend dan belum ada di repo ini.
-  `app/seed.py` mengasumsikan tiap `students[].evidence` memuat `sessionId`, `state`, `code`, `explain`,
-  `dialog`, `answers`, dan `findings_raw`. Sesuaikan bila bentuk ekspornya berbeda.
+- `seed/seed.json` dan `seed/golden.json` diekspor dari `data.ts` frontend. Semua nama fiktif.
+- Roster 35 mahasiswa dan rubrik i1–i4 di `data.ts` dimuat sebagai milik sesi `operasi-stack`
+  (asesmen awal, berstatus "perlu"). `stackTask` mengisi instruksi sesi itu; `queueTask` mengisi
+  sesi `antrean-queue` termasuk skrip cadangan Boby.
+- Mahasiswa berstatus `kurang` (mengumpulkan tetapi tidak lengkap) tetap punya percobaan tanpa bukti;
+  mahasiswa `belum` tidak punya percobaan.
+- Temuan "menunggu" hanya dihitung pada percobaan berstatus `perlu`; percobaan `selesai` di seed
+  dianggap sudah ditinjau.
 - Skor seed dihitung ulang oleh server dari `findings_raw` (server adalah satu sumber kebenaran);
-  tes emas memastikan hasilnya sama dengan frontend.
+  tes emas (`tests/test_golden.py`) memastikan status, skor, dan ringkasan roster sama persis dengan frontend.
+- Kolom tambahan di luar skema awal: `students.prev`, `students.archetype`, `sessions.boby_script`,
+  ringkasan statis sesi riwayat (`submitted`, `enrolled`, `avg`, `pending`), dan `assignments.title`.
+- Penugasan di seed merujuk mahasiswa lewat nama; `seed.py` memetakannya ke id.
+- Inisial mahasiswa diturunkan dari dua kata pertama nama.
 - Temuan yang belum diputuskan dosen tetap memakai status AI, sehingga skor masih sementara
   sampai finalisasi.
 - `POST /api/demo/reset` mempertahankan `analysis_cache` supaya demo berulang tidak memakai kuota LLM.

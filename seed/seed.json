@@ -1,0 +1,2970 @@
+{
+  "note": "Diekspor dari src/lib/data.ts. Semua nama fiktif.",
+  "today": "30 Okt 2026",
+  "lecturer": {
+    "name": "Dr. Rina Anggraini",
+    "initials": "RA",
+    "role": "Dosen · Informatika"
+  },
+  "me": {
+    "id": "nadia",
+    "name": "Nadia Rahmawati",
+    "nim": "2410512031",
+    "initials": "NR"
+  },
+  "concepts": {
+    "lifo": "Prinsip LIFO",
+    "pushpop": "Operasi push & pop",
+    "fifo": "Prinsip FIFO",
+    "pilih": "Memilih stack atau queue",
+    "underflow": "Stack kosong (underflow)",
+    "ruang": "Ruang sampel",
+    "sederhana": "Peluang sederhana",
+    "bebas": "Kejadian saling bebas",
+    "fallacy": "Gambler's fallacy",
+    "komplemen": "Peluang komplemen"
+  },
+  "classes": [
+    {
+      "id": "if203b",
+      "code": "IF203",
+      "name": "Struktur Data",
+      "group": "Kelas B",
+      "joinCode": "SD-B26",
+      "material": "Stack & Queue",
+      "enrolled": 35
+    },
+    {
+      "id": "st101a",
+      "code": "ST101",
+      "name": "Statistika Dasar",
+      "group": "Kelas A",
+      "joinCode": "ST-A26",
+      "material": "Peluang",
+      "enrolled": 32
+    }
+  ],
+  "indicators": [
+    {
+      "id": "i1",
+      "name": "Menjelaskan urutan LIFO",
+      "concept": "lifo",
+      "weight": 30
+    },
+    {
+      "id": "i2",
+      "name": "Menelusuri push dan pop",
+      "concept": "pushpop",
+      "weight": 25
+    },
+    {
+      "id": "i3",
+      "name": "Menolak analogi antrean untuk stack",
+      "concept": "fifo",
+      "weight": 25
+    },
+    {
+      "id": "i4",
+      "name": "Menerapkan stack atau queue di kasus baru",
+      "concept": "pilih",
+      "weight": 20
+    }
+  ],
+  "stackTask": {
+    "title": "Operasi Stack",
+    "instruction": "Simulasikan operasi berikut pada stack kosong: push(3), push(7), pop(), push(5), push(9), pop(). Tulis kodenya dengan list Python, lalu sebutkan elemen yang keluar dan isi akhir stack.",
+    "goal": "Menjelaskan urutan keluar-masuk elemen pada stack dan memilih struktur yang tepat untuk sebuah kasus.",
+    "penerapan": [
+      "Printer laboratorium menerima dokumen dari 30 mahasiswa. Struktur apa yang kamu pakai untuk dokumen yang menunggu dicetak? Jelaskan alasanmu.",
+      "Fitur Undo di editor teks membatalkan perubahan terakhir lebih dulu. Struktur apa yang cocok, dan apa yang terjadi saat Undo ditekan dua kali?"
+    ]
+  },
+  "queueTask": {
+    "id": "antrean-queue",
+    "title": "Antrean dengan Queue",
+    "className": "Struktur Data · Kelas B",
+    "type": "Formatif",
+    "due": "6 Nov 2026, 23.59 WIB",
+    "instruction": "Simulasikan antrean loket: enqueue(\"Ani\"), enqueue(\"Budi\"), dequeue(), enqueue(\"Cici\"), dequeue(). Tulis kodenya dengan collections.deque, lalu sebutkan siapa yang dilayani dan siapa yang tersisa.",
+    "goal": "Menjelaskan urutan FIFO dan membedakan kapan memakai queue atau stack.",
+    "code": "from collections import deque\n\nantrean = deque()\nantrean.append(\"Ani\")\nantrean.append(\"Budi\")\nantrean.popleft()      # Ani dilayani\nantrean.append(\"Cici\")\nantrean.popleft()      # Budi dilayani\nprint(antrean)         # deque(['Cici'])",
+    "explain": "Yang dilayani Ani lalu Budi, dan tersisa Cici, karena queue melayani yang datang lebih dulu.",
+    "focus": [
+      {
+        "concept": "Prinsip FIFO",
+        "state": "Sudah jelas"
+      },
+      {
+        "concept": "Operasi enqueue & dequeue",
+        "state": "Sedang ditinjau"
+      },
+      {
+        "concept": "Memilih stack atau queue",
+        "state": "Berikutnya"
+      }
+    ],
+    "boby": [
+      "Aku lihat kamu pakai popleft(), bukan pop(). Kenapa harus dari kiri? Kalau pakai pop() biasa, siapa yang keluar duluan?",
+      "Oh, berarti queue dan stack sebenarnya sama saja ya, cuma beda nama fungsi. Dua-duanya mengeluarkan elemen yang paling akhir masuk.",
+      "Kalau begitu, untuk tombol Undo di aplikasi catatan, kamu pakai queue juga? Kenapa?"
+    ],
+    "sample": [
+      "popleft() mengambil dari kiri, yaitu Ani yang datang pertama. Kalau pop() biasa, yang keluar Budi karena dia yang terakhir masuk, dan itu bukan antrean.",
+      "Queue mengeluarkan yang paling awal masuk, stack yang paling akhir masuk. Jadi urutan keluarnya berlawanan, bukan cuma beda nama.",
+      "Tidak, Undo pakai stack, karena yang dibatalkan dulu perubahan terakhir."
+    ],
+    "penerapan": [
+      "Pusat panggilan kampus menerima telepon dari 40 mahasiswa. Struktur apa yang kamu pakai untuk telepon yang menunggu dijawab? Jelaskan alasanmu.",
+      "Tombol Kembali di peramban membuka halaman terakhir yang kamu kunjungi. Struktur apa yang cocok, dan apa yang terjadi saat Kembali ditekan dua kali?"
+    ]
+  },
+  "status_value": {
+    "terpenuhi": 1,
+    "sebagian": 0.5,
+    "belum": 0,
+    "ambigu": null
+  },
+  "students": [
+    {
+      "id": "nadia",
+      "name": "Nadia Rahmawati",
+      "nim": "2410512031",
+      "state": "perlu",
+      "archetype": "terapan",
+      "prev": 70,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "bagas",
+      "name": "Bagas Pratama",
+      "nim": "2410512004",
+      "state": "perlu",
+      "archetype": "ambigu",
+      "prev": 74,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "13.05"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena yang diambil selalu yang paling atas, yaitu yang terakhir dimasukkan.",
+            "time": "13.06"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "13.07"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean itu FIFO sedangkan stack LIFO, jadi urutan keluarnya terbalik.",
+            "time": "13.08"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "13.08"
+          },
+          {
+            "who": "mhs",
+            "text": "Isinya [3, 5].",
+            "time": "13.09"
+          }
+        ],
+        "answers": [
+          "Queue, supaya dokumen dicetak sesuai urutan kirim.",
+          "Queue juga, biar urut."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "yang diambil selalu yang paling atas, yaitu yang terakhir dimasukkan",
+            "reason": "Menjelaskan LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack menyimpan data berurutan dari bawah",
+            "reason": "Penelusuran hanya berupa jawaban akhir tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Antrean itu FIFO sedangkan stack LIFO",
+            "reason": "Menolak analogi dan menyebut perbedaan urutannya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Queue juga, biar urut.",
+            "reason": "Tepat untuk printer, keliru untuk Undo."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep LIFO kuat; penelusuran langkah perlu bukti tambahan."
+      }
+    },
+    {
+      "id": "citra",
+      "name": "Citra Maharani",
+      "nim": "2410512008",
+      "state": "perlu",
+      "archetype": "bingung",
+      "prev": 41,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop(0)       # 3 keluar\nstack.append(5)\nstack.append(9)\nstack.pop(0)       # 7 keluar\nprint(stack)       # [5, 9]",
+        "explain": "Yang keluar 3 lalu 7, karena yang masuk pertama keluar pertama. Isi akhirnya [5, 9].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Kamu pakai pop(0). Itu mengambil elemen yang pertama masuk atau yang terakhir masuk?",
+            "time": "09.40"
+          },
+          {
+            "who": "mhs",
+            "text": "Yang pertama masuk, karena di stack yang pertama masuk harus keluar dulu biar adil.",
+            "time": "09.42"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "09.42"
+          },
+          {
+            "who": "mhs",
+            "choice": "Setuju",
+            "text": "Setuju, stack itu seperti antrean, yang pertama datang dilayani dulu.",
+            "time": "09.43"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau tumpukan piring di kantin, piring mana yang kamu ambil duluan?",
+            "time": "09.44"
+          },
+          {
+            "who": "mhs",
+            "text": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "time": "09.45"
+          }
+        ],
+        "answers": [
+          "Stack, karena dokumen pertama dicetak duluan.",
+          "Queue, supaya perubahan pertama dibatalkan dulu."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "reason": "Mengenali ambil-dari-atas pada piring, tetapi belum menghubungkannya ke stack."
+          },
+          {
+            "indicator": "i2",
+            "status": "belum",
+            "stage": "praktik",
+            "quote": "Yang keluar 3 lalu 7",
+            "reason": "Penelusuran memakai urutan FIFO, sehingga isi akhir keliru."
+          },
+          {
+            "indicator": "i3",
+            "status": "belum",
+            "stage": "reverse_tutor",
+            "quote": "Setuju, stack itu seperti antrean",
+            "reason": "Menerima analogi antrean untuk stack."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Stack, karena dokumen pertama dicetak duluan.",
+            "reason": "Alasannya tepat untuk antrean cetak, tetapi nama strukturnya tertukar."
+          }
+        ],
+        "misconception": "Menganggap stack melayani elemen yang pertama masuk.",
+        "summary": "Masih menganggap elemen pertama yang masuk keluar lebih dulu."
+      }
+    },
+    {
+      "id": "dimas",
+      "name": "Dimas Aryasatya",
+      "nim": "2410512011",
+      "state": "perlu",
+      "archetype": "terapan",
+      "prev": 63,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "eka",
+      "name": "Eka Wulandari",
+      "nim": "2410512013",
+      "state": "perlu",
+      "archetype": "cukup",
+      "prev": 72,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "fajar",
+      "name": "Fajar Nugroho",
+      "nim": "2410512015",
+      "state": "perlu",
+      "archetype": "bingung",
+      "prev": 38,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop(0)       # 3 keluar\nstack.append(5)\nstack.append(9)\nstack.pop(0)       # 7 keluar\nprint(stack)       # [5, 9]",
+        "explain": "Yang keluar 3 lalu 7, karena yang masuk pertama keluar pertama. Isi akhirnya [5, 9].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Kamu pakai pop(0). Itu mengambil elemen yang pertama masuk atau yang terakhir masuk?",
+            "time": "09.40"
+          },
+          {
+            "who": "mhs",
+            "text": "Yang pertama masuk, karena di stack yang pertama masuk harus keluar dulu biar adil.",
+            "time": "09.42"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "09.42"
+          },
+          {
+            "who": "mhs",
+            "choice": "Setuju",
+            "text": "Setuju, stack itu seperti antrean, yang pertama datang dilayani dulu.",
+            "time": "09.43"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau tumpukan piring di kantin, piring mana yang kamu ambil duluan?",
+            "time": "09.44"
+          },
+          {
+            "who": "mhs",
+            "text": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "time": "09.45"
+          }
+        ],
+        "answers": [
+          "Stack, karena dokumen pertama dicetak duluan.",
+          "Queue, supaya perubahan pertama dibatalkan dulu."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "reason": "Mengenali ambil-dari-atas pada piring, tetapi belum menghubungkannya ke stack."
+          },
+          {
+            "indicator": "i2",
+            "status": "belum",
+            "stage": "praktik",
+            "quote": "Yang keluar 3 lalu 7",
+            "reason": "Penelusuran memakai urutan FIFO, sehingga isi akhir keliru."
+          },
+          {
+            "indicator": "i3",
+            "status": "belum",
+            "stage": "reverse_tutor",
+            "quote": "Setuju, stack itu seperti antrean",
+            "reason": "Menerima analogi antrean untuk stack."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Stack, karena dokumen pertama dicetak duluan.",
+            "reason": "Alasannya tepat untuk antrean cetak, tetapi nama strukturnya tertukar."
+          }
+        ],
+        "misconception": "Menganggap stack melayani elemen yang pertama masuk.",
+        "summary": "Masih menganggap elemen pertama yang masuk keluar lebih dulu."
+      }
+    },
+    {
+      "id": "gita",
+      "name": "Gita Lestari",
+      "nim": "2410512017",
+      "state": "perlu",
+      "archetype": "terapan",
+      "prev": 66,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "hendra",
+      "name": "Hendra Wijaya",
+      "nim": "2410512019",
+      "state": "perlu",
+      "archetype": "cukup",
+      "prev": 70,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "indah",
+      "name": "Indah Permatasari",
+      "nim": "2410512021",
+      "state": "kurang",
+      "archetype": null,
+      "prev": 58,
+      "evidence": null
+    },
+    {
+      "id": "joko",
+      "name": "Joko Santoso",
+      "nim": "2410512022",
+      "state": "kurang",
+      "archetype": null,
+      "prev": 52,
+      "evidence": null
+    },
+    {
+      "id": "kirana",
+      "name": "Kirana Putri",
+      "nim": "2410512023",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 88,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "lukman",
+      "name": "Lukman Hakim",
+      "nim": "2410512024",
+      "state": "selesai",
+      "archetype": "terapan",
+      "prev": 61,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "maya",
+      "name": "Maya Anggraeni",
+      "nim": "2410512025",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 75,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "naufal",
+      "name": "Naufal Ramadhan",
+      "nim": "2410512026",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 92,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "oktaviani",
+      "name": "Oktaviani Sari",
+      "nim": "2410512027",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 69,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "putu",
+      "name": "Putu Ardana",
+      "nim": "2410512028",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 85,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "qori",
+      "name": "Qori Amalia",
+      "nim": "2410512029",
+      "state": "selesai",
+      "archetype": "bingung",
+      "prev": 35,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop(0)       # 3 keluar\nstack.append(5)\nstack.append(9)\nstack.pop(0)       # 7 keluar\nprint(stack)       # [5, 9]",
+        "explain": "Yang keluar 3 lalu 7, karena yang masuk pertama keluar pertama. Isi akhirnya [5, 9].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Kamu pakai pop(0). Itu mengambil elemen yang pertama masuk atau yang terakhir masuk?",
+            "time": "09.40"
+          },
+          {
+            "who": "mhs",
+            "text": "Yang pertama masuk, karena di stack yang pertama masuk harus keluar dulu biar adil.",
+            "time": "09.42"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "09.42"
+          },
+          {
+            "who": "mhs",
+            "choice": "Setuju",
+            "text": "Setuju, stack itu seperti antrean, yang pertama datang dilayani dulu.",
+            "time": "09.43"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau tumpukan piring di kantin, piring mana yang kamu ambil duluan?",
+            "time": "09.44"
+          },
+          {
+            "who": "mhs",
+            "text": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "time": "09.45"
+          }
+        ],
+        "answers": [
+          "Stack, karena dokumen pertama dicetak duluan.",
+          "Queue, supaya perubahan pertama dibatalkan dulu."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "reason": "Mengenali ambil-dari-atas pada piring, tetapi belum menghubungkannya ke stack."
+          },
+          {
+            "indicator": "i2",
+            "status": "belum",
+            "stage": "praktik",
+            "quote": "Yang keluar 3 lalu 7",
+            "reason": "Penelusuran memakai urutan FIFO, sehingga isi akhir keliru."
+          },
+          {
+            "indicator": "i3",
+            "status": "belum",
+            "stage": "reverse_tutor",
+            "quote": "Setuju, stack itu seperti antrean",
+            "reason": "Menerima analogi antrean untuk stack."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Stack, karena dokumen pertama dicetak duluan.",
+            "reason": "Alasannya tepat untuk antrean cetak, tetapi nama strukturnya tertukar."
+          }
+        ],
+        "misconception": "Menganggap stack melayani elemen yang pertama masuk.",
+        "summary": "Masih menganggap elemen pertama yang masuk keluar lebih dulu."
+      }
+    },
+    {
+      "id": "rizky",
+      "name": "Rizky Kurniawan",
+      "nim": "2410512030",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 71,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "salsabila",
+      "name": "Salsabila Azzahra",
+      "nim": "2410512032",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 90,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "taufik",
+      "name": "Taufik Hidayat",
+      "nim": "2410512033",
+      "state": "selesai",
+      "archetype": "terapan",
+      "prev": 60,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "ulfa",
+      "name": "Ulfa Nuraini",
+      "nim": "2410512034",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 76,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "vino",
+      "name": "Vino Saputra",
+      "nim": "2410512035",
+      "state": "selesai",
+      "archetype": "bingung",
+      "prev": 44,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop(0)       # 3 keluar\nstack.append(5)\nstack.append(9)\nstack.pop(0)       # 7 keluar\nprint(stack)       # [5, 9]",
+        "explain": "Yang keluar 3 lalu 7, karena yang masuk pertama keluar pertama. Isi akhirnya [5, 9].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Kamu pakai pop(0). Itu mengambil elemen yang pertama masuk atau yang terakhir masuk?",
+            "time": "09.40"
+          },
+          {
+            "who": "mhs",
+            "text": "Yang pertama masuk, karena di stack yang pertama masuk harus keluar dulu biar adil.",
+            "time": "09.42"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "09.42"
+          },
+          {
+            "who": "mhs",
+            "choice": "Setuju",
+            "text": "Setuju, stack itu seperti antrean, yang pertama datang dilayani dulu.",
+            "time": "09.43"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau tumpukan piring di kantin, piring mana yang kamu ambil duluan?",
+            "time": "09.44"
+          },
+          {
+            "who": "mhs",
+            "text": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "time": "09.45"
+          }
+        ],
+        "answers": [
+          "Stack, karena dokumen pertama dicetak duluan.",
+          "Queue, supaya perubahan pertama dibatalkan dulu."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "reason": "Mengenali ambil-dari-atas pada piring, tetapi belum menghubungkannya ke stack."
+          },
+          {
+            "indicator": "i2",
+            "status": "belum",
+            "stage": "praktik",
+            "quote": "Yang keluar 3 lalu 7",
+            "reason": "Penelusuran memakai urutan FIFO, sehingga isi akhir keliru."
+          },
+          {
+            "indicator": "i3",
+            "status": "belum",
+            "stage": "reverse_tutor",
+            "quote": "Setuju, stack itu seperti antrean",
+            "reason": "Menerima analogi antrean untuk stack."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Stack, karena dokumen pertama dicetak duluan.",
+            "reason": "Alasannya tepat untuk antrean cetak, tetapi nama strukturnya tertukar."
+          }
+        ],
+        "misconception": "Menganggap stack melayani elemen yang pertama masuk.",
+        "summary": "Masih menganggap elemen pertama yang masuk keluar lebih dulu."
+      }
+    },
+    {
+      "id": "wahyu",
+      "name": "Wahyu Setiawan",
+      "nim": "2410512036",
+      "state": "selesai",
+      "archetype": "terapan",
+      "prev": 59,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "yasmin",
+      "name": "Yasmin Haura",
+      "nim": "2410512037",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 81,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "zaki",
+      "name": "Zaki Firmansyah",
+      "nim": "2410512038",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 73,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "ayu",
+      "name": "Ayu Kartika",
+      "nim": "2410512001",
+      "state": "selesai",
+      "archetype": "terapan",
+      "prev": 64,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Isi akhirnya [3, 5]. Yang keluar 7 lalu 9, karena pop selalu mengambil elemen yang terakhir masuk.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "10.14"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 ada di paling atas. Stack cuma bisa diambil dari atas, jadi yang terakhir masuk keluar duluan.",
+            "time": "10.15"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "10.16"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu yang datang duluan dilayani duluan, stack kebalikannya.",
+            "time": "10.17"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "10.17"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah pop yang kedua isinya tinggal [3, 5], soalnya 9 baru saja masuk paling atas.",
+            "time": "10.18"
+          }
+        ],
+        "answers": [
+          "Saya pakai stack supaya dokumen terbaru dicetak dulu, jadi yang baru mengirim tidak perlu menunggu lama.",
+          "Stack. Undo dua kali membatalkan perubahan terakhir, lalu perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "pop selalu mengambil elemen yang terakhir masuk",
+            "reason": "Menyebut urutan LIFO dengan kata-katanya sendiri."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Setelah pop yang kedua isinya tinggal [3, 5]",
+            "reason": "Menelusuri isi stack setelah tiap pop dengan benar."
+          },
+          {
+            "indicator": "i3",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "stack kebalikannya",
+            "reason": "Menolak analogi antrean, tetapi belum menjelaskan elemen mana yang keluar lebih dulu."
+          },
+          {
+            "indicator": "i4",
+            "status": "belum",
+            "stage": "penerapan",
+            "quote": "Saya pakai stack supaya dokumen terbaru dicetak dulu",
+            "reason": "Memilih stack untuk antrean cetak; dokumen yang dikirim lebih dulu bisa tertunda terus."
+          }
+        ],
+        "misconception": "Memilih struktur dari siapa yang cepat dilayani, bukan dari urutan layanan yang adil.",
+        "summary": "Menelusuri push dan pop dengan benar, tetapi memilih stack untuk antrean cetak."
+      }
+    },
+    {
+      "id": "bima",
+      "name": "Bima Prasetyo",
+      "nim": "2410512005",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 68,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "clara",
+      "name": "Clara Simanjuntak",
+      "nim": "2410512007",
+      "state": "selesai",
+      "archetype": "kuat",
+      "prev": 86,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 lalu 9, isi akhirnya [3, 5]. Setiap pop mengambil elemen paling atas, yaitu yang terakhir di-push.",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "08.30"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena stack itu LIFO. Saat pop, 7 ada di atas 3, jadi 7 yang keluar.",
+            "time": "08.31"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "08.32"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Antrean kantin itu queue: yang datang duluan keluar duluan. Stack sebaliknya, yang terakhir datang keluar duluan.",
+            "time": "08.33"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "08.33"
+          },
+          {
+            "who": "mhs",
+            "text": "Setelah push 5 dan push 9 isinya [3, 5, 9]; pop mengambil 9, jadi tersisa [3, 5].",
+            "time": "08.35"
+          }
+        ],
+        "answers": [
+          "Queue. Dokumen dicetak sesuai urutan kirim supaya tidak ada yang tertunda terus.",
+          "Stack. Undo pertama membatalkan perubahan terakhir, Undo kedua membatalkan perubahan sebelumnya."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Karena stack itu LIFO",
+            "reason": "Menyebut dan menjelaskan LIFO."
+          },
+          {
+            "indicator": "i2",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "pop mengambil 9, jadi tersisa [3, 5]",
+            "reason": "Menelusuri setiap langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "Stack sebaliknya, yang terakhir datang keluar duluan",
+            "reason": "Menolak analogi dengan alasan."
+          },
+          {
+            "indicator": "i4",
+            "status": "terpenuhi",
+            "stage": "penerapan",
+            "quote": "Dokumen dicetak sesuai urutan kirim",
+            "reason": "Memilih queue dan stack dengan tepat."
+          }
+        ],
+        "misconception": null,
+        "summary": "Konsep dan penerapan sudah kuat."
+      }
+    },
+    {
+      "id": "dewa",
+      "name": "Dewa Surya",
+      "nim": "2410512010",
+      "state": "selesai",
+      "archetype": "bingung",
+      "prev": 47,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop(0)       # 3 keluar\nstack.append(5)\nstack.append(9)\nstack.pop(0)       # 7 keluar\nprint(stack)       # [5, 9]",
+        "explain": "Yang keluar 3 lalu 7, karena yang masuk pertama keluar pertama. Isi akhirnya [5, 9].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Kamu pakai pop(0). Itu mengambil elemen yang pertama masuk atau yang terakhir masuk?",
+            "time": "09.40"
+          },
+          {
+            "who": "mhs",
+            "text": "Yang pertama masuk, karena di stack yang pertama masuk harus keluar dulu biar adil.",
+            "time": "09.42"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "09.42"
+          },
+          {
+            "who": "mhs",
+            "choice": "Setuju",
+            "text": "Setuju, stack itu seperti antrean, yang pertama datang dilayani dulu.",
+            "time": "09.43"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau tumpukan piring di kantin, piring mana yang kamu ambil duluan?",
+            "time": "09.44"
+          },
+          {
+            "who": "mhs",
+            "text": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "time": "09.45"
+          }
+        ],
+        "answers": [
+          "Stack, karena dokumen pertama dicetak duluan.",
+          "Queue, supaya perubahan pertama dibatalkan dulu."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Piring paling atas. Mungkin itu beda dengan stack di program.",
+            "reason": "Mengenali ambil-dari-atas pada piring, tetapi belum menghubungkannya ke stack."
+          },
+          {
+            "indicator": "i2",
+            "status": "belum",
+            "stage": "praktik",
+            "quote": "Yang keluar 3 lalu 7",
+            "reason": "Penelusuran memakai urutan FIFO, sehingga isi akhir keliru."
+          },
+          {
+            "indicator": "i3",
+            "status": "belum",
+            "stage": "reverse_tutor",
+            "quote": "Setuju, stack itu seperti antrean",
+            "reason": "Menerima analogi antrean untuk stack."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "Stack, karena dokumen pertama dicetak duluan.",
+            "reason": "Alasannya tepat untuk antrean cetak, tetapi nama strukturnya tertukar."
+          }
+        ],
+        "misconception": "Menganggap stack melayani elemen yang pertama masuk.",
+        "summary": "Masih menganggap elemen pertama yang masuk keluar lebih dulu."
+      }
+    },
+    {
+      "id": "elisa",
+      "name": "Elisa Manurung",
+      "nim": "2410512012",
+      "state": "selesai",
+      "archetype": "cukup",
+      "prev": 74,
+      "evidence": {
+        "code": "stack = []\nstack.append(3)\nstack.append(7)\nstack.pop()        # 7 keluar\nstack.append(5)\nstack.append(9)\nstack.pop()        # 9 keluar\nprint(stack)       # [3, 5]",
+        "explain": "Yang keluar 7 dan 9 karena keduanya terakhir masuk. Isi akhirnya [3, 5].",
+        "dialog": [
+          {
+            "who": "boby",
+            "text": "Aku lihat 7 keluar duluan, padahal 3 masuk lebih dulu. Kenapa bukan 3 yang keluar?",
+            "time": "15.20"
+          },
+          {
+            "who": "mhs",
+            "text": "Karena 7 yang terakhir di-push sebelum pop.",
+            "time": "15.21"
+          },
+          {
+            "who": "boby",
+            "text": "Oh, berarti stack itu seperti antrean kantin, ya? Yang datang duluan, dilayani duluan.",
+            "trap": true,
+            "time": "15.22"
+          },
+          {
+            "who": "mhs",
+            "choice": "Tidak setuju",
+            "text": "Di antrean yang datang duluan dilayani duluan, di stack yang terakhir masuk justru keluar duluan.",
+            "time": "15.23"
+          },
+          {
+            "who": "boby",
+            "text": "Kalau begitu, setelah pop yang kedua, isinya apa dan kenapa?",
+            "time": "15.24"
+          },
+          {
+            "who": "mhs",
+            "text": "[3, 5].",
+            "time": "15.24"
+          }
+        ],
+        "answers": [
+          "Queue, karena yang mengirim duluan harus dicetak duluan.",
+          "Stack, undo pertama membatalkan ketikan terakhir."
+        ],
+        "findings_raw": [
+          {
+            "indicator": "i1",
+            "status": "terpenuhi",
+            "stage": "praktik",
+            "quote": "keduanya terakhir masuk",
+            "reason": "Menyebut LIFO dengan benar."
+          },
+          {
+            "indicator": "i2",
+            "status": "sebagian",
+            "stage": "reverse_tutor",
+            "quote": "Karena 7 yang terakhir di-push sebelum pop.",
+            "reason": "Benar untuk pop pertama; isi setelah pop kedua hanya disebut tanpa langkah."
+          },
+          {
+            "indicator": "i3",
+            "status": "terpenuhi",
+            "stage": "reverse_tutor",
+            "quote": "di stack yang terakhir masuk justru keluar duluan",
+            "reason": "Menolak analogi dan menjelaskan urutan keluarnya."
+          },
+          {
+            "indicator": "i4",
+            "status": "sebagian",
+            "stage": "penerapan",
+            "quote": "undo pertama membatalkan ketikan terakhir",
+            "reason": "Memilih struktur dengan tepat, tetapi tidak menjelaskan Undo yang kedua."
+          }
+        ],
+        "misconception": null,
+        "summary": "Paham LIFO; penjelasan langkah pop masih melompat."
+      }
+    },
+    {
+      "id": "farhan",
+      "name": "Farhan Maulana",
+      "nim": "2410512014",
+      "state": "belum",
+      "archetype": null,
+      "prev": 55,
+      "evidence": null
+    },
+    {
+      "id": "galih",
+      "name": "Galih Pamungkas",
+      "nim": "2410512016",
+      "state": "belum",
+      "archetype": null,
+      "prev": 62,
+      "evidence": null
+    },
+    {
+      "id": "hana",
+      "name": "Hana Safitri",
+      "nim": "2410512018",
+      "state": "belum",
+      "archetype": null,
+      "prev": 70,
+      "evidence": null
+    },
+    {
+      "id": "ilham",
+      "name": "Ilham Saputro",
+      "nim": "2410512020",
+      "state": "belum",
+      "archetype": null,
+      "prev": 49,
+      "evidence": null
+    },
+    {
+      "id": "jessica",
+      "name": "Jessica Tanuwijaya",
+      "nim": "2410512002",
+      "state": "belum",
+      "archetype": null,
+      "prev": 77,
+      "evidence": null
+    }
+  ],
+  "sessions": [
+    {
+      "id": "operasi-stack",
+      "title": "Operasi Stack",
+      "classId": "if203b",
+      "type": "Asesmen awal",
+      "format": "Teks / Kode",
+      "due": "28 Okt 2026",
+      "submitted": 30,
+      "enrolled": 35,
+      "state": "perlu",
+      "avg": 71,
+      "pending": 32
+    },
+    {
+      "id": "antrean-queue",
+      "title": "Antrean dengan Queue",
+      "classId": "if203b",
+      "type": "Formatif",
+      "format": "Teks / Kode",
+      "due": "6 Nov 2026",
+      "submitted": 12,
+      "enrolled": 35,
+      "state": "berlangsung",
+      "avg": null,
+      "pending": 0
+    },
+    {
+      "id": "saling-bebas",
+      "title": "Kejadian Saling Bebas",
+      "classId": "st101a",
+      "type": "Asesmen awal",
+      "format": "Foto + Teks",
+      "due": "24 Okt 2026",
+      "submitted": 32,
+      "enrolled": 32,
+      "state": "selesai",
+      "avg": 71,
+      "pending": 0
+    },
+    {
+      "id": "stack-vs-queue",
+      "title": "Stack atau Queue?",
+      "classId": "if203b",
+      "type": "Formatif",
+      "format": "Teks / Kode",
+      "due": "21 Okt 2026",
+      "submitted": 34,
+      "enrolled": 35,
+      "state": "selesai",
+      "avg": 67,
+      "pending": 0
+    },
+    {
+      "id": "konsep-queue",
+      "title": "Konsep Queue",
+      "classId": "if203b",
+      "type": "Asesmen awal",
+      "format": "Teks / Kode",
+      "due": "7 Okt 2026",
+      "submitted": 33,
+      "enrolled": 35,
+      "state": "selesai",
+      "avg": 61,
+      "pending": 0
+    },
+    {
+      "id": "peluang-sederhana",
+      "title": "Peluang Sederhana",
+      "classId": "st101a",
+      "type": "Formatif",
+      "format": "Foto + Teks",
+      "due": "30 Sep 2026",
+      "submitted": 31,
+      "enrolled": 32,
+      "state": "selesai",
+      "avg": 69,
+      "pending": 0
+    },
+    {
+      "id": "stack-list",
+      "title": "Stack dengan List Python",
+      "classId": "if203b",
+      "type": "Formatif",
+      "format": "Teks / Kode",
+      "due": "23 Sep 2026",
+      "submitted": 35,
+      "enrolled": 35,
+      "state": "selesai",
+      "avg": 63,
+      "pending": 0
+    },
+    {
+      "id": "ruang-sampel",
+      "title": "Ruang Sampel",
+      "classId": "st101a",
+      "type": "Asesmen awal",
+      "format": "Foto + Teks",
+      "due": "16 Sep 2026",
+      "submitted": 32,
+      "enrolled": 32,
+      "state": "selesai",
+      "avg": 64,
+      "pending": 0
+    },
+    {
+      "id": "konsep-stack",
+      "title": "Konsep Stack",
+      "classId": "if203b",
+      "type": "Asesmen awal",
+      "format": "Teks / Kode",
+      "due": "9 Sep 2026",
+      "submitted": 35,
+      "enrolled": 35,
+      "state": "selesai",
+      "avg": 58,
+      "pending": 0
+    }
+  ],
+  "activities": [
+    {
+      "id": "lb-pilih",
+      "title": "Stack atau Queue?",
+      "kind": "Latihan bertahap",
+      "concepts": [
+        "pilih",
+        "fifo"
+      ],
+      "minutes": 15,
+      "level": "Menengah",
+      "goal": "Memilih struktur dari urutan layanan yang diminta sebuah kasus.",
+      "steps": [
+        "Lima kasus sehari-hari, dari yang mudah ke yang sulit",
+        "Umpan balik langsung di tiap kasus",
+        "Satu kasus terbuka untuk dijelaskan ke Boby"
+      ],
+      "outcome": "Memilih queue untuk layanan berurutan dan stack untuk membatalkan langkah.",
+      "active": true
+    },
+    {
+      "id": "sk-printer",
+      "title": "Antrean printer laboratorium",
+      "kind": "Studi kasus",
+      "concepts": [
+        "pilih",
+        "fifo"
+      ],
+      "minutes": 20,
+      "level": "Menengah",
+      "goal": "Menganalisis akibat memilih struktur yang keliru pada antrean cetak.",
+      "steps": [
+        "Membaca log 30 pengiriman dokumen",
+        "Membandingkan urutan cetak dengan stack dan queue",
+        "Menulis rekomendasi untuk admin lab"
+      ],
+      "outcome": "Menjelaskan mengapa stack membuat dokumen lama tertunda terus.",
+      "active": true
+    },
+    {
+      "id": "mi-telusur",
+      "title": "Telusuri push dan pop",
+      "kind": "Modul interaktif",
+      "concepts": [
+        "pushpop",
+        "lifo"
+      ],
+      "minutes": 15,
+      "level": "Dasar",
+      "goal": "Menelusuri isi stack setelah setiap operasi.",
+      "steps": [
+        "Tumpukan visual yang bisa di-push dan di-pop",
+        "Delapan soal tebak isi stack",
+        "Ringkasan langkah yang keliru"
+      ],
+      "outcome": "Menuliskan isi stack yang benar setelah rangkaian operasi.",
+      "active": true
+    },
+    {
+      "id": "vid-lifo",
+      "title": "LIFO dalam enam menit",
+      "kind": "Video pembelajaran",
+      "concepts": [
+        "lifo"
+      ],
+      "minutes": 8,
+      "level": "Dasar",
+      "goal": "Memahami urutan LIFO lewat contoh tumpukan piring dan riwayat peramban.",
+      "steps": [
+        "Video 6 menit",
+        "Dua pertanyaan cek pemahaman"
+      ],
+      "outcome": "Menyebut contoh LIFO di luar pemrograman.",
+      "active": true
+    },
+    {
+      "id": "lb-underflow",
+      "title": "Saat stack kosong",
+      "kind": "Latihan bertahap",
+      "concepts": [
+        "underflow",
+        "pushpop"
+      ],
+      "minutes": 12,
+      "level": "Menengah",
+      "goal": "Menangani pop pada stack kosong tanpa program berhenti.",
+      "steps": [
+        "Tiga potongan kode dengan pop berlebih",
+        "Menulis pengecekan sebelum pop",
+        "Menjelaskan pilihan ke Boby"
+      ],
+      "outcome": "Menulis pop yang aman dari underflow.",
+      "active": true
+    },
+    {
+      "id": "tt-kurung",
+      "title": "Cek tanda kurung",
+      "kind": "Latihan bertahap",
+      "concepts": [
+        "lifo",
+        "pushpop"
+      ],
+      "minutes": 25,
+      "level": "Tantangan",
+      "goal": "Memakai stack untuk memeriksa pasangan tanda kurung.",
+      "steps": [
+        "Lima ekspresi bertingkat",
+        "Menulis fungsi cek_kurung()",
+        "Menguji dengan kasus kosong dan tak seimbang"
+      ],
+      "outcome": "Fungsi yang benar untuk ekspresi bertingkat.",
+      "active": true
+    },
+    {
+      "id": "lb-bebas",
+      "title": "Apakah kejadian ini saling bebas?",
+      "kind": "Latihan bertahap",
+      "concepts": [
+        "bebas"
+      ],
+      "minutes": 15,
+      "level": "Menengah",
+      "goal": "Membedakan kejadian saling bebas dan bergantung.",
+      "steps": [
+        "Enam pasang kejadian",
+        "Menghitung P(A dan B) dua cara",
+        "Menjelaskan satu pasang ke Boby"
+      ],
+      "outcome": "Menguji kebebasan dengan P(A dan B) = P(A) × P(B).",
+      "active": true
+    },
+    {
+      "id": "sk-koin",
+      "title": "Lima kali angka berturut-turut",
+      "kind": "Studi kasus",
+      "concepts": [
+        "fallacy",
+        "bebas"
+      ],
+      "minutes": 20,
+      "level": "Menengah",
+      "goal": "Menyadari gambler’s fallacy pada lemparan koin.",
+      "steps": [
+        "Simulasi 1.000 lemparan",
+        "Membandingkan tebakan dengan hasil",
+        "Menulis kesimpulan"
+      ],
+      "outcome": "Menjelaskan mengapa peluang lemparan berikutnya tetap 1/2.",
+      "active": true
+    },
+    {
+      "id": "mi-ruang",
+      "title": "Menyusun ruang sampel",
+      "kind": "Modul interaktif",
+      "concepts": [
+        "ruang",
+        "sederhana"
+      ],
+      "minutes": 15,
+      "level": "Dasar",
+      "goal": "Mendaftar ruang sampel dengan diagram pohon.",
+      "steps": [
+        "Diagram pohon dua dadu",
+        "Menghitung titik sampel",
+        "Lima soal peluang sederhana"
+      ],
+      "outcome": "Ruang sampel lengkap tanpa titik ganda.",
+      "active": true
+    },
+    {
+      "id": "vid-komplemen",
+      "title": "Peluang komplemen",
+      "kind": "Video pembelajaran",
+      "concepts": [
+        "komplemen"
+      ],
+      "minutes": 7,
+      "level": "Dasar",
+      "goal": "Memakai 1 − P(A) untuk soal “paling sedikit satu”.",
+      "steps": [
+        "Video 5 menit",
+        "Tiga soal latihan"
+      ],
+      "outcome": "Menyelesaikan soal “paling sedikit satu” dengan komplemen.",
+      "active": false
+    }
+  ],
+  "need": {
+    "terapan": {
+      "need": "penguatan",
+      "concepts": [
+        "pilih",
+        "fifo"
+      ],
+      "activity": "lb-pilih"
+    },
+    "bingung": {
+      "need": "penguatan",
+      "concepts": [
+        "lifo",
+        "pushpop"
+      ],
+      "activity": "mi-telusur"
+    },
+    "cukup": {
+      "need": "pemantauan",
+      "concepts": [
+        "pushpop"
+      ],
+      "activity": "mi-telusur"
+    },
+    "ambigu": {
+      "need": "pemantauan",
+      "concepts": [
+        "pushpop"
+      ],
+      "activity": "mi-telusur"
+    },
+    "kuat": {
+      "need": "tidak",
+      "concepts": [],
+      "activity": "tt-kurung"
+    }
+  },
+  "assignments": [
+    {
+      "id": "pd-12",
+      "title": "Telusuri push dan pop",
+      "activity": "mi-telusur",
+      "students": [
+        "Lukman Hakim",
+        "Qori Amalia",
+        "Vino Saputra"
+      ],
+      "start": "22 Okt 2026, 08.00",
+      "due": "25 Okt 2026, 23.59",
+      "mode": "Mandiri",
+      "done": 2,
+      "state": "pelaksanaan"
+    },
+    {
+      "id": "pd-11",
+      "title": "Saat stack kosong",
+      "activity": "lb-underflow",
+      "students": [
+        "Nadia Rahmawati",
+        "Dimas Aryasatya"
+      ],
+      "start": "27 Okt 2026, 08.00",
+      "due": "1 Nov 2026, 23.59",
+      "mode": "Mandiri",
+      "done": 0,
+      "state": "pelaksanaan"
+    },
+    {
+      "id": "pd-09",
+      "title": "LIFO dalam enam menit",
+      "activity": "vid-lifo",
+      "students": [
+        "Taufik Hidayat",
+        "Wahyu Setiawan"
+      ],
+      "start": "14 Okt 2026, 08.00",
+      "due": "17 Okt 2026, 23.59",
+      "mode": "Mandiri",
+      "done": 2,
+      "state": "riwayat"
+    }
+  ],
+  "levels": [
+    {
+      "id": "sangat",
+      "name": "Sangat baik",
+      "min": 85
+    },
+    {
+      "id": "baik",
+      "name": "Baik",
+      "min": 70
+    },
+    {
+      "id": "cukup",
+      "name": "Cukup",
+      "min": 55
+    },
+    {
+      "id": "perlu",
+      "name": "Perlu pendampingan",
+      "min": 0
+    }
+  ],
+  "trend": {
+    "labels": [
+      "9 Sep",
+      "23 Sep",
+      "7 Okt",
+      "21 Okt",
+      "28 Okt"
+    ],
+    "values": [
+      58,
+      63,
+      61,
+      67,
+      71
+    ]
+  },
+  "traps": [
+    {
+      "id": "t1",
+      "topic": "Stack & Queue",
+      "statement": "Stack itu seperti antrean kantin: yang datang duluan, dilayani duluan.",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    },
+    {
+      "id": "t2",
+      "topic": "Peluang",
+      "statement": "Koin sudah lima kali angka, jadi lemparan berikutnya pasti gambar.",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    },
+    {
+      "id": "t3",
+      "topic": "Stack & Queue",
+      "statement": "Fitur Undo paling cocok memakai queue.",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    },
+    {
+      "id": "t4",
+      "topic": "Peluang",
+      "statement": "Peluang 0,5 artinya kejadian itu pasti muncul sekali tiap dua percobaan.",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    },
+    {
+      "id": "t5",
+      "topic": "Stack & Queue",
+      "statement": "Queue mengeluarkan elemen yang terakhir masuk.",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    },
+    {
+      "id": "t6",
+      "topic": "Peluang",
+      "statement": "P(A atau B) selalu sama dengan P(A) + P(B).",
+      "misconception": null,
+      "correction_key": null,
+      "indicator": null,
+      "todo": "Heisyan mengisi misconception, correction_key, indicator"
+    }
+  ]
+}
