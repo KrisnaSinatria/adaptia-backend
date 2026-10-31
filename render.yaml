@@ -1,0 +1,29 @@
+# Render Blueprint: satu web service dengan URL HTTPS publik.
+# Nilai rahasia (sync: false) diisi lewat dashboard Render, tidak pernah di repositori.
+services:
+  - type: web
+    name: adaptia-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.6
+      - key: LLM_MODE
+        value: live
+      - key: LLM_TIMEOUT_SECONDS
+        value: "6"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: LLM_MODEL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
