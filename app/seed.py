@@ -69,8 +69,9 @@ def _class_rows(seed):
     ]
 
 
-def _session_rows(seed):
+def _session_rows(seed, drafts):
     tasks = {STACK_TASK_SESSION: seed["stackTask"], seed["queueTask"]["id"]: seed["queueTask"]}
+    keys = drafts.get("penerapanKeys", {})
     rows = []
     for s in seed["sessions"]:
         task = tasks.get(s["id"], {})
@@ -79,6 +80,7 @@ def _session_rows(seed):
             "format": s["format"], "due": s["due"], "state": s["state"],
             "instruction": task.get("instruction"), "goal": task.get("goal"),
             "penerapan": task.get("penerapan", []), "boby_script": task.get("boby", []),
+            "penerapan_keys": task.get("penerapanKeys") or keys.get(s["id"], []),
             "submitted": s["submitted"], "enrolled": s["enrolled"], "avg": s["avg"], "pending": s["pending"],
         })
     return rows
@@ -129,7 +131,7 @@ def build_rows(seed: dict, drafts: dict | None = None) -> dict[str, list[dict]]:
     return {
         "classes": _class_rows(seed),
         "students": _student_rows(seed, roster_class),
-        "sessions": _session_rows(seed),
+        "sessions": _session_rows(seed, drafts),
         "indicators": _indicator_rows(seed, drafts),
         "traps": _trap_rows(seed, drafts),
         "activities": [{k: a[k] for k in ("id", "title", "kind", "concepts", "minutes", "level", "goal",

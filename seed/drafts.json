@@ -3,6 +3,16 @@
   "concepts": {
     "enqdeq": "Operasi enqueue & dequeue"
   },
+  "penerapanKeys": {
+    "operasi-stack": [
+      "Queue: dokumen yang dikirim lebih dulu dicetak lebih dulu (FIFO), supaya adil dan tidak ada yang tertunda terus.",
+      "Stack: Undo membatalkan perubahan terakhir dulu (LIFO); ditekan dua kali membatalkan perubahan terakhir lalu perubahan sebelumnya."
+    ],
+    "antrean-queue": [
+      "Queue: telepon yang masuk lebih dulu dijawab lebih dulu (FIFO), supaya adil.",
+      "Stack: Kembali membuka halaman terakhir dulu (LIFO); ditekan dua kali membuka halaman terakhir lalu halaman sebelumnya."
+    ]
+  },
   "sessionIndicators": {
     "antrean-queue": [
       {"id": "q1", "name": "Menjelaskan urutan FIFO", "concept": "fifo", "weight": 30},

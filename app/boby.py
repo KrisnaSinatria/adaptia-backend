@@ -53,7 +53,8 @@ WORD = re.compile(r"[a-z_][a-z0-9_]*")
 # Frasa yang berarti Boby mengoreksi atau mengarahkan, padahal ia murid yang sedang diajari.
 CORRECTING = ("tidak sesuai", "kurang tepat", "tidak tepat", "seharusnya", "harusnya", "yang benar",
               "yang salah", "itu salah", "kamu salah", "keliru", "sebaiknya", "lebih baik pakai", "lebih baik gunakan",
-              "coba ganti", "ganti jadi", "diganti")
+              "coba ganti", "ganti jadi", "diganti", "tidak pas", "nggak pas", "gak pas", "ga pas", "kurang pas",
+              "bukan yang benar", "salah pakai")
 
 
 def now_hhmm() -> str:

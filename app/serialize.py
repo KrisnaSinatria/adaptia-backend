@@ -10,7 +10,7 @@ def camel(row: dict, drop: tuple[str, ...] = ()) -> dict:
 
 
 def session_out(row: dict) -> dict:
-    return camel(row, drop=("boby_script", "instruction", "goal", "penerapan"))
+    return camel(row, drop=("boby_script", "instruction", "goal", "penerapan", "penerapan_keys"))
 
 
 def findings_out(attempt: dict) -> list[dict]:

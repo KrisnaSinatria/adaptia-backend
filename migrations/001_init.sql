@@ -34,6 +34,7 @@ create table sessions (
   instruction text,
   goal text,
   penerapan jsonb not null default '[]',
+  penerapan_keys jsonb not null default '[]',  -- kunci soal penerapan; hanya untuk analis, tidak dikirim ke mahasiswa
   boby_script jsonb not null default '[]',  -- skrip cadangan Boby bila LLM gagal
   -- Ringkasan statis untuk sesi riwayat; roster sesi aktif dihitung langsung dari attempts.
   submitted int,

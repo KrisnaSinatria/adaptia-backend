@@ -26,7 +26,7 @@ def test_evaluate_reports_sample_size_and_agreement():
 
 def test_llm_failures_are_counted_separately(monkeypatch):
     from app import analyst
-    monkeypatch.setattr(analyst, "llm_findings", lambda *a: None)
+    monkeypatch.setattr(analyst, "llm_findings", lambda *a, **k: None)
     item = {"code": "", "explain": "", "dialog": [], "answers": [], "sessionId": "s", "labels": {"i1": "belum"}}
     report = evaluate([item], {"s": [{"id": "i1", "concept": "lifo", "name": "x", "weight": 100}]}, False)
     assert report["llmFailed"] == 1 and report["judgments"] == 0 and report["agreementPct"] is None

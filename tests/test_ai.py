@@ -208,6 +208,22 @@ def test_analyst_prompt_carries_trap_correction_key(live, monkeypatch):
     assert "Queue itu FIFO." in prompts[0] and "q3" in prompts[0]
 
 
+def test_analyst_prompt_carries_application_keys_but_session_api_does_not(client, student, live, monkeypatch, db):
+    prompts = []
+    monkeypatch.setattr(llm, "complete_json", lambda *a, **k: prompts.append(a[1]))
+    session = next(s for s in db.tables["sessions"] if s["id"] == "antrean-queue")
+    attempt = {"code": "x", "explain": "", "dialog": [], "answers": []}
+    analyst.llm_findings(attempt, INDICATORS, None, session)
+    assert session["penerapan_keys"][0] in prompts[0] and "JANGAN dikutip" in prompts[0]
+    body = client.get("/api/sessions/antrean-queue", headers=student).text
+    listing = client.get("/api/me/sessions", headers=student).text
+    assert session["penerapan_keys"][0] not in body and "penerapanKeys" not in listing
+
+
+def test_boby_rejects_casual_correction():
+    assert not boby.valid_question("Kenapa pop nggak pas buat antrean?", [], "q.pop()")
+
+
 def _trap_attempt(choice):
     return {"code": "q.pop()", "explain": "", "answers": ["Stack."], "dialog": [
         {"who": "boby", "text": "Kenapa pop?"}, {"who": "mhs", "text": "Biar cepat."},

@@ -149,7 +149,7 @@ def submit(request: Request, attempt_id: str, user: dict = Depends(require_stude
     key = analyst.cache_key(session["id"], analyst.labeled_transcript(attempt), indicators)
     findings, used = repo.get_cached_analysis(db, key), "llm"
     if findings is None:
-        findings = analyst.llm_findings(attempt, indicators, trap)
+        findings = analyst.llm_findings(attempt, indicators, trap, session)
         if findings is not None:
             repo.put_cached_analysis(db, key, findings)
     if findings is None:

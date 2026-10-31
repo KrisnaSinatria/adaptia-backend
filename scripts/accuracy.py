@@ -34,12 +34,14 @@ def cohen_kappa(pairs: list[tuple[str, str]]) -> float | None:
     return None if expected == 1 else (observed - expected) / (1 - expected)
 
 
-def evaluate(items: list[dict], indicators_by_session: dict, use_fallback: bool) -> dict:
+def evaluate(items: list[dict], indicators_by_session: dict, use_fallback: bool,
+             sessions: dict | None = None) -> dict:
     pairs, per_indicator, llm_failed, confusion = [], {}, 0, Counter()
     for item in items:
         indicators = indicators_by_session[item["sessionId"]]
         transcript = transcript_of(item)
-        findings = None if use_fallback else analyst.llm_findings(item, indicators)
+        session = (sessions or {}).get(item["sessionId"])
+        findings = None if use_fallback else analyst.llm_findings(item, indicators, session=session)
         if findings is None:
             if not use_fallback:
                 llm_failed += 1
@@ -79,7 +81,8 @@ def main(argv: list[str] | None = None) -> int:
     if unknown:
         print(f"Sesi tanpa rubrik: {sorted(unknown)}", file=sys.stderr)
         return 1
-    print(json.dumps(evaluate(items, by_session, args.fallback), ensure_ascii=False, indent=2))
+    sessions = {s["id"]: s for s in rows["sessions"]}
+    print(json.dumps(evaluate(items, by_session, args.fallback, sessions), ensure_ascii=False, indent=2))
     return 0
 
 
