@@ -147,7 +147,8 @@ def reset_database(db, seed: dict | None = None) -> dict[str, int]:
         db.table(table).delete().neq("id", "").execute()
     for table in TABLES:
         if rows[table]:
-            db.table(table).insert(rows[table]).execute()
+            # Baris tanpa sebagian kolom (mis. percobaan "kurang") harus memakai default kolom, bukan NULL.
+            db.table(table).insert(rows[table], default_to_null=False).execute()
     return {t: len(rows[t]) for t in TABLES}
 
 

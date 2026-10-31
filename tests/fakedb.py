@@ -12,6 +12,24 @@ ATTEMPT_DEFAULTS = {
 }
 _clock = itertools.count()
 
+# Kolom NOT NULL di migrations/001_init.sql; Postgres menolak NULL eksplisit walau kolomnya punya default.
+NOT_NULL = {
+    "classes": {"code", "name"},
+    "students": {"name", "nim"},
+    "sessions": {"title", "penerapan", "boby_script"},
+    "indicators": {"name", "weight", "position"},
+    "attempts": {"session_id", "student_id", "state", "code", "explain", "dialog", "answers", "findings",
+                 "summary", "decisions", "corrections", "note"},
+    "traps": {"statement", "active"},
+    "activities": {"title", "concepts", "steps", "active"},
+    "assignments": {"student_ids", "done"},
+    "analysis_cache": {"result"},
+}
+
+
+class NotNullViolation(Exception):
+    pass
+
 
 class Query:
     def __init__(self, db, table):
@@ -43,8 +61,14 @@ class Query:
         self.limit_n = n
         return self
 
-    def insert(self, rows):
-        self.op, self.payload = "insert", rows if isinstance(rows, list) else [rows]
+    def insert(self, rows, default_to_null=True):
+        rows = rows if isinstance(rows, list) else [rows]
+        if len(rows) > 1 and default_to_null:
+            # Seperti PostgREST: pada bulk insert, kolom yang tidak dikirim sebagian baris menjadi NULL,
+            # bukan nilai default kolom (kecuali Prefer: missing=default).
+            keys = set().union(*rows)
+            rows = [{k: r.get(k) for k in keys} for r in rows]
+        self.op, self.payload = "insert", rows
         return self
 
     def upsert(self, row):
@@ -65,6 +89,9 @@ class Query:
             out = []
             for r in self.payload:
                 r = copy.deepcopy(r)
+                bad = [k for k in NOT_NULL.get(self.table, ()) if k in r and r[k] is None]
+                if bad:
+                    raise NotNullViolation(f"{self.table}: null value in column {bad}")
                 if self.table == "attempts":
                     r = {**copy.deepcopy(ATTEMPT_DEFAULTS), "id": str(uuid.uuid4()), **r}
                     r["created_at"] = next(_clock)
