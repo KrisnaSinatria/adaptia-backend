@@ -8,7 +8,10 @@ from pathlib import Path
 
 from app.logic import score_of, shown_statuses, transcript_of
 
-SEED_PATH = Path(__file__).resolve().parents[1] / "seed" / "seed.json"
+SEED_DIR = Path(__file__).resolve().parents[1] / "seed"
+SEED_PATH = SEED_DIR / "seed.json"
+# Isi yang belum ada di data.ts (rubrik sesi Queue, kunci bank jebakan). Lihat _note di dalamnya.
+DRAFTS_PATH = SEED_DIR / "drafts.json"
 
 # Roster 35 mahasiswa dan rubrik i1–i4 di data.ts milik sesi asesmen awal "Operasi Stack".
 ROSTER_SESSION = "operasi-stack"
@@ -22,6 +25,32 @@ def load_seed(path: Path = SEED_PATH) -> dict:
     if not path.exists():
         raise FileNotFoundError(f"{path} belum ada. Ekspor dari src/lib/data.ts terlebih dahulu.")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_drafts(path: Path = DRAFTS_PATH) -> dict:
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def _indicator_rows(seed, drafts):
+    by_session = {ROSTER_SESSION: seed["indicators"], **drafts.get("sessionIndicators", {})}
+    return [
+        {"id": i["id"], "session_id": session_id, "name": i["name"], "concept": i["concept"],
+         "weight": i["weight"], "position": pos}
+        for session_id, inds in by_session.items()
+        for pos, i in enumerate(inds)
+    ]
+
+
+def _trap_rows(seed, drafts):
+    rows = []
+    for t in seed["traps"]:
+        row = {k: t[k] for k in ("id", "topic", "statement", "misconception", "correction_key", "indicator")}
+        # Nilai dari data.ts menang; draf hanya mengisi yang masih null.
+        for k, v in drafts.get("traps", {}).get(t["id"], {}).items():
+            if row.get(k) is None:
+                row[k] = v
+        rows.append(row)
+    return rows
 
 
 def _class_rows(seed):
@@ -86,20 +115,15 @@ def _assignment_rows(seed):
     return rows
 
 
-def build_rows(seed: dict) -> dict[str, list[dict]]:
+def build_rows(seed: dict, drafts: dict | None = None) -> dict[str, list[dict]]:
+    drafts = load_drafts() if drafts is None else drafts
     roster_class = next(s["classId"] for s in seed["sessions"] if s["id"] == ROSTER_SESSION)
-    indicators = [
-        {"id": i["id"], "session_id": ROSTER_SESSION, "name": i["name"], "concept": i["concept"],
-         "weight": i["weight"], "position": pos}
-        for pos, i in enumerate(seed["indicators"])
-    ]
     return {
         "classes": _class_rows(seed),
         "students": _student_rows(seed, roster_class),
         "sessions": _session_rows(seed),
-        "indicators": indicators,
-        "traps": [{k: t[k] for k in ("id", "topic", "statement", "misconception", "correction_key", "indicator")}
-                  for t in seed["traps"]],
+        "indicators": _indicator_rows(seed, drafts),
+        "traps": _trap_rows(seed, drafts),
         "activities": [{k: a[k] for k in ("id", "title", "kind", "concepts", "minutes", "level", "goal",
                                           "steps", "outcome", "active")} for a in seed["activities"]],
         "assignments": _assignment_rows(seed),

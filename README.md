@@ -54,6 +54,10 @@ Belum: login demo, alur mahasiswa, Boby, analis, endpoint dosen, deploy.
   ringkasan statis sesi riwayat (`submitted`, `enrolled`, `avg`, `pending`), dan `assignments.title`.
 - Penugasan di seed merujuk mahasiswa lewat nama; `seed.py` memetakannya ke id.
 - Inisial mahasiswa diturunkan dari dua kata pertama nama.
+- **Draf yang belum disetujui** ada di `seed/drafts.json`: rubrik sesi `antrean-queue` (q1–q4)
+  dan isi `misconception`, `correction_key`, `indicator` bank jebakan. Nilai dari `data.ts` selalu
+  menang; draf hanya mengisi yang masih kosong. Jebakan peluang (t2, t4, t6) belum punya indikator
+  karena rubrik sesi Statistika tidak ada di `data.ts`.
 - Temuan yang belum diputuskan dosen tetap memakai status AI, sehingga skor masih sementara
   sampai finalisasi.
 - `POST /api/demo/reset` mempertahankan `analysis_cache` supaya demo berulang tidak memakai kuota LLM.

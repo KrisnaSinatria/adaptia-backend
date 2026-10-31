@@ -1,0 +1,46 @@
+{
+  "_note": "DRAF backend (Bayu), belum ada di data.ts dan belum disetujui Heisyan atau dosen. Digabung ke seed oleh app/seed.py. Setelah disetujui, pindahkan ke data.ts lalu ekspor ulang seed.json dan hapus berkas ini.",
+  "concepts": {
+    "enqdeq": "Operasi enqueue & dequeue"
+  },
+  "sessionIndicators": {
+    "antrean-queue": [
+      {"id": "q1", "name": "Menjelaskan urutan FIFO", "concept": "fifo", "weight": 30},
+      {"id": "q2", "name": "Menelusuri enqueue dan dequeue", "concept": "enqdeq", "weight": 25},
+      {"id": "q3", "name": "Membedakan queue dari stack", "concept": "lifo", "weight": 25},
+      {"id": "q4", "name": "Memilih queue atau stack di kasus baru", "concept": "pilih", "weight": 20}
+    ]
+  },
+  "traps": {
+    "t1": {
+      "misconception": "Menyamakan stack dengan antrean (FIFO).",
+      "correction_key": "Stack mengeluarkan elemen yang terakhir masuk (LIFO); antrean melayani yang datang lebih dulu (FIFO).",
+      "indicator": "i3"
+    },
+    "t2": {
+      "misconception": "Gambler's fallacy: menganggap hasil lemparan sebelumnya memengaruhi lemparan berikutnya.",
+      "correction_key": "Lemparan koin saling bebas; peluang gambar tetap 0,5 berapa pun hasil sebelumnya.",
+      "indicator": null
+    },
+    "t3": {
+      "misconception": "Mengira Undo membatalkan perubahan paling awal lebih dulu.",
+      "correction_key": "Undo membatalkan perubahan terakhir lebih dulu, jadi memakai stack (LIFO), bukan queue.",
+      "indicator": "i4"
+    },
+    "t4": {
+      "misconception": "Menafsirkan peluang sebagai jaminan frekuensi dalam percobaan sedikit.",
+      "correction_key": "Peluang 0,5 berarti dalam banyak percobaan kejadian muncul sekitar separuhnya, bukan pasti sekali tiap dua percobaan.",
+      "indicator": null
+    },
+    "t5": {
+      "misconception": "Menyamakan urutan keluar queue dengan stack.",
+      "correction_key": "Queue mengeluarkan elemen yang paling awal masuk (FIFO); yang terakhir masuk keluar paling akhir.",
+      "indicator": "q3"
+    },
+    "t6": {
+      "misconception": "Menjumlahkan peluang tanpa memperhatikan irisan.",
+      "correction_key": "P(A atau B) = P(A) + P(B) - P(A dan B); penjumlahan langsung hanya berlaku bila A dan B saling lepas.",
+      "indicator": null
+    }
+  }
+}
