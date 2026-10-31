@@ -145,6 +145,27 @@ def trap_context(trap: dict | None) -> str:
             f" Indikator terkait: {trap.get('indicator') or '-'}.")
 
 
+TRAP_AGREED = "Aturan jebakan: menyetujui pernyataan keliru Boby."
+
+
+def apply_trap_rule(findings: list[dict], attempt: dict, trap: dict | None) -> list[dict]:
+    """Hasil jebakan dihitung aturan, bukan model: menyetujui pernyataan keliru berarti indikatornya "belum",
+    dengan balasan mahasiswa sendiri sebagai kutipan. Penolakan tetap dinilai dari alasannya (oleh model)."""
+    if not trap or not trap.get("indicator"):
+        return findings
+    dialog = attempt.get("dialog") or []
+    reply = next((dialog[i + 1] for i, t in enumerate(dialog)
+                  if t.get("trapId") == trap["id"] and i + 1 < len(dialog)), None)
+    if not reply or reply.get("choice") != "Setuju":
+        return findings
+    return [
+        {**f, "status": "belum", "aiStatus": f.get("aiStatus", f["status"]), "stage": "reverse_tutor",
+         "quote": reply["text"], "reason": TRAP_AGREED}
+        if f["indicator"] == trap["indicator"] else f
+        for f in findings
+    ]
+
+
 def llm_findings(attempt: dict, indicators: list[dict], trap: dict | None = None) -> list[dict] | None:
     ids = [i["id"] for i in indicators]
     rubric = json.dumps([{k: i[k] for k in ("id", "name", "concept", "weight")} for i in indicators],
@@ -154,7 +175,7 @@ def llm_findings(attempt: dict, indicators: list[dict], trap: dict | None = None
     for model in analyst_models():
         found = parse(llm.complete_json("analyst", prompt, schema(ids), model=model), ids)
         if found is not None:
-            return ground(found, attempt)
+            return apply_trap_rule(ground(found, attempt), attempt, trap)
     return None
 
 

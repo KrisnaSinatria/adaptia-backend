@@ -208,6 +208,33 @@ def test_analyst_prompt_carries_trap_correction_key(live, monkeypatch):
     assert "Queue itu FIFO." in prompts[0] and "q3" in prompts[0]
 
 
+def _trap_attempt(choice):
+    return {"code": "q.pop()", "explain": "", "answers": ["Stack."], "dialog": [
+        {"who": "boby", "text": "Kenapa pop?"}, {"who": "mhs", "text": "Biar cepat."},
+        {"who": "boby", "text": "Queue mengeluarkan elemen yang terakhir masuk.", "trap": True, "trapId": "t5"},
+        {"who": "mhs", "text": "Iya, sama seperti stack.", "choice": choice}]}
+
+
+def test_agreeing_with_trap_is_decided_by_rule_not_model():
+    trap = {"id": "t5", "indicator": "q3"}
+    model = [{"indicator": "q3", "status": "ambigu", "stage": "praktik",
+              "quote": "Queue mengeluarkan elemen yang terakhir masuk", "reason": "r", "aiStatus": "terpenuhi"},
+             {"indicator": "q1", "status": "belum", "stage": "praktik", "quote": "q.pop()", "reason": "r"}]
+    out = {f["indicator"]: f for f in analyst.apply_trap_rule(model, _trap_attempt("Setuju"), trap)}
+    assert (out["q3"]["status"], out["q3"]["quote"], out["q3"]["stage"]) == ("belum", "Iya, sama seperti stack.",
+                                                                            "reverse_tutor")
+    assert out["q3"]["aiStatus"] == "terpenuhi" and out["q3"]["reason"] == analyst.TRAP_AGREED
+    assert out["q1"] == model[1]
+    # Menolak jebakan: penilaian alasan tetap milik model.
+    assert analyst.apply_trap_rule(model, _trap_attempt("Tidak setuju"), trap) == model
+
+
+def test_boby_repeating_a_question_falls_back(live, monkeypatch):
+    monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa pop?")
+    session = {"boby_script": ["s1", "s2", "Undo pakai apa?"]}
+    assert boby.ask(3, session, _trap_attempt("Setuju"), []) == ("Undo pakai apa?", True)
+
+
 def test_labeled_transcript_marks_speakers_trap_and_choice():
     t = analyst.labeled_transcript({"code": "c", "explain": "e", "answers": ["a"], "dialog": [
         {"who": "boby", "text": "x", "trap": True}, {"who": "mhs", "text": "y", "choice": "Setuju"}]})

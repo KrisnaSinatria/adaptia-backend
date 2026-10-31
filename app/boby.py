@@ -146,7 +146,9 @@ def ask(turn_index: int, session: dict, attempt: dict, correction_keys: list[str
         dialog=llm.fence(_dialog_text(attempt.get("dialog") or [])),
     )
     text = clean(llm.complete_text("boby", prompt))
-    if valid_question(text, correction_keys, student_text(attempt), reference_names(session)):
+    asked = {norm(t["text"]) for t in attempt.get("dialog") or [] if t["who"] == "boby"}
+    if (valid_question(text, correction_keys, student_text(attempt), reference_names(session))
+            and norm(text) not in asked):
         return text, False
     # Skrip sesi ditulis untuk kode contoh; bila menyebut kode yang tidak ditulis mahasiswa ini, pakai pertanyaan umum.
     script = session.get("boby_script") or []
