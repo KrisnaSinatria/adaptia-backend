@@ -19,7 +19,7 @@ def findings_out(attempt: dict) -> list[dict]:
     out = []
     for f in attempt.get("findings") or []:
         verified = verify_quote(f["quote"], transcript)
-        out.append({**f, "status": f["status"] if verified else "ambigu", "aiStatus": f["status"],
+        out.append({**f, "status": f["status"] if verified else "ambigu", "aiStatus": f.get("aiStatus", f["status"]),
                     "verified": verified})
     return out
 

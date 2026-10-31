@@ -39,7 +39,7 @@ def evaluate(items: list[dict], indicators_by_session: dict, use_fallback: bool)
     for item in items:
         indicators = indicators_by_session[item["sessionId"]]
         transcript = transcript_of(item)
-        findings = None if use_fallback else analyst.llm_findings(transcript, indicators)
+        findings = None if use_fallback else analyst.llm_findings(item, indicators)
         if findings is None:
             if not use_fallback:
                 llm_failed += 1

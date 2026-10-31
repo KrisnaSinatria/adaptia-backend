@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     jwt_secret: str = ""
 
     llm_model: str = ""
+    # Model analis terpisah: kuota token Groq dihitung per model, dan analis butuh penalaran lebih kuat.
+    llm_analyst_model: str = ""
     llm_mode: Literal["live", "scripted"] = "live"
     llm_timeout_seconds: float = 6.0
     # Hanya untuk model penalaran (mis. openai/gpt-oss-*); kosongkan untuk model lain.
@@ -24,6 +26,10 @@ class Settings(BaseSettings):
     @property
     def origins(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
+
+    @property
+    def analyst_model(self) -> str:
+        return self.llm_analyst_model or self.llm_model
 
     @property
     def llm_live(self) -> bool:

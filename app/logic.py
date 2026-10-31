@@ -39,6 +39,15 @@ def transcript_of(ev) -> str:
     return "\n".join([ev["code"], ev["explain"], *[t["text"] for t in ev["dialog"]], *ev["answers"]])
 
 
+def student_parts(ev) -> dict:
+    """Teks yang ditulis mahasiswa sendiri, per tahap. Ucapan Boby sengaja tidak termasuk."""
+    return {
+        "praktik": "\n".join([ev["code"], ev["explain"]]),
+        "reverse_tutor": "\n".join(t["text"] for t in ev["dialog"] if t["who"] == "mhs"),
+        "penerapan": "\n".join(ev["answers"]),
+    }
+
+
 def verify_quote(quote: str, transcript: str) -> bool:
     return norm(quote) in norm(transcript)
 

@@ -23,7 +23,8 @@ def _client() -> groq.Groq:
     return groq.Groq(api_key=s.groq_api_key, max_retries=0, timeout=s.llm_timeout_seconds)
 
 
-def _call(kind: str, prompt: str, max_tokens: int, temperature: float, response_format: dict | None = None) -> str | None:
+def _call(kind: str, prompt: str, max_tokens: int, temperature: float, model: str,
+          response_format: dict | None = None) -> str | None:
     s = get_settings()
     if not s.llm_live:
         log.info("llm kind=%s skipped mode=%s", kind, s.llm_mode)
@@ -38,7 +39,7 @@ def _call(kind: str, prompt: str, max_tokens: int, temperature: float, response_
         kwargs["include_reasoning"] = False
     try:
         res = _client().chat.completions.create(
-            model=s.llm_model,
+            model=model,
             messages=[{"role": "user", "content": prompt}],
             max_completion_tokens=max_tokens,
             temperature=temperature,
@@ -55,14 +56,15 @@ def _call(kind: str, prompt: str, max_tokens: int, temperature: float, response_
     return None
 
 
-def complete_text(kind: str, prompt: str, max_tokens: int = 600) -> str | None:
-    return _call(kind, prompt, max_tokens, temperature=0.7)
+# Batas token kecil: Groq memesan max_completion_tokens dari kuota token per menit.
+def complete_text(kind: str, prompt: str, max_tokens: int = 400) -> str | None:
+    return _call(kind, prompt, max_tokens, temperature=0.7, model=get_settings().llm_model)
 
 
-def complete_json(kind: str, prompt: str, schema: dict, max_tokens: int = 3000) -> dict | None:
+def complete_json(kind: str, prompt: str, schema: dict, max_tokens: int = 1600) -> dict | None:
     """Keluaran terstruktur (strict). None bila model tidak dipakai, gagal, atau JSON rusak."""
     fmt = {"type": "json_schema", "json_schema": {"name": kind, "strict": True, "schema": schema}}
-    text = _call(kind, prompt, max_tokens, temperature=0.0, response_format=fmt)
+    text = _call(kind, prompt, max_tokens, temperature=0.0, model=get_settings().analyst_model, response_format=fmt)
     if text is None:
         return None
     try:

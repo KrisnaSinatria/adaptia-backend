@@ -143,15 +143,16 @@ def submit(request: Request, attempt_id: str, user: dict = Depends(require_stude
         raise ApiError(409, "rubric_missing", "Sesi ini belum punya rubrik.")
 
     transcript = transcript_of(attempt)
-    key = analyst.cache_key(session["id"], transcript, indicators)
+    trap_ids = [t["trapId"] for t in attempt["dialog"] if t.get("trapId")]
+    trap = repo.get_trap(db, trap_ids[0]) if trap_ids else None
+    # Kunci cache memakai transkrip berlabel supaya pilihan Setuju/Tidak setuju ikut dibedakan.
+    key = analyst.cache_key(session["id"], analyst.labeled_transcript(attempt), indicators)
     findings, used = repo.get_cached_analysis(db, key), "llm"
     if findings is None:
-        findings = analyst.llm_findings(transcript, indicators)
+        findings = analyst.llm_findings(attempt, indicators, trap)
         if findings is not None:
             repo.put_cached_analysis(db, key, findings)
     if findings is None:
-        trap_ids = [t["trapId"] for t in attempt["dialog"] if t.get("trapId")]
-        trap = repo.get_trap(db, trap_ids[0]) if trap_ids else None
         findings, used = analyst.keyword_findings(attempt, indicators, (trap or {}).get("indicator")), "fallback"
 
     statuses = shown_statuses(findings, transcript)

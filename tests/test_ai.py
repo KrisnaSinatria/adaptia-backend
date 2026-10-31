@@ -33,6 +33,40 @@ def test_valid_question_rules():
     assert not boby.valid_question("Jadi queue mengeluarkan elemen yang paling awal masuk (FIFO) ya?", keys)
 
 
+def test_clean_strips_name_and_greeting_prefixes():
+    assert boby.clean("Boby: kenapa begitu?") == "Kenapa begitu?"
+    assert boby.clean("kamu, kenapa pakai deque?") == "Kenapa pakai deque?"
+    assert boby.clean('"Bobby, kenapa?"') == "Kenapa?"
+    assert boby.clean(None) is None
+
+
+def test_boby_must_not_name_code_the_student_never_wrote():
+    student = "antrean.append('Ani')\nantrean.pop()\nPop mengambil elemen terakhir."
+    hints = boby.reference_names({"boby_script": ["Kamu pakai popleft(), bukan pop(). Kenapa?", "Undo pakai apa?"]})
+    assert hints == {"popleft"}
+    assert boby.valid_question("Kenapa kamu pakai pop di baris itu?", [], student, hints)
+    assert not boby.valid_question("Kenapa pakai pop daripada popleft?", [], student, hints)
+    assert not boby.valid_question("Kenapa tidak pakai `deque.popleft()`?", [], student, hints)
+    assert not boby.valid_question("Satu. Dua. Tiga. Empat?", [], student, hints)
+    # Siswa yang sudah menulis popleft boleh ditanya bandingannya dengan pop.
+    assert boby.valid_question("Kenapa `popleft` bukan `pop`?", [], "q.popleft()", hints)
+
+
+def test_boby_must_not_correct_the_student():
+    assert not boby.valid_question("Kenapa pop tidak sesuai untuk antrean?", [], "q.pop()")
+    assert not boby.valid_question("Seharusnya pakai apa ya?", [], "q.pop()")
+    assert boby.valid_question("Kenapa kamu pilih pop?", [], "q.pop()")
+
+
+def test_script_fallback_is_replaced_when_it_names_code_the_student_never_wrote():
+    session = {"boby_script": ["Kamu pakai popleft(), bukan pop(). Kenapa?", "jebakan", "Kalau Undo, pakai apa?"]}
+    uses_pop = {"code": "q.pop()", "explain": "", "dialog": []}
+    uses_popleft = {"code": "q.popleft()\nq.pop()", "explain": "", "dialog": []}
+    assert boby.ask(1, session, uses_pop, []) == (boby.GENERIC[1], True)
+    assert boby.ask(1, session, uses_popleft, []) == (session["boby_script"][0], True)
+    assert boby.ask(3, session, uses_pop, []) == (session["boby_script"][2], True)
+
+
 def test_pick_trap_prefers_unused_then_repeats():
     traps = [{"id": "t1"}, {"id": "t5"}]
     assert boby.pick_trap(traps, set())["id"] == "t1"
@@ -136,6 +170,49 @@ def test_submit_with_model_verifies_quotes_and_caches(client, student, live, mon
     # ambigu tidak dihitung: tiga indikator terpenuhi dengan bobot 30+25+20 -> 100
     assert body["score"] == 100
     assert len(db.tables["analysis_cache"]) == 1 and calls == ["analyst"]
+
+
+def test_quote_from_boby_is_downgraded_and_stage_follows_quote():
+    attempt = {"code": "q.popleft()", "explain": "Queue itu FIFO.",
+               "dialog": [{"who": "boby", "text": "Queue mengeluarkan elemen yang terakhir masuk.", "trap": True},
+                          {"who": "mhs", "text": "Bukan, yang paling awal masuk.", "choice": "Tidak setuju"}],
+               "answers": ["Pakai queue."]}
+    raw = [
+        {"indicator": "q1", "status": "terpenuhi", "stage": "penerapan", "quote": "Queue itu FIFO", "reason": "r"},
+        {"indicator": "q3", "status": "terpenuhi", "stage": "praktik",
+         "quote": "Queue mengeluarkan elemen yang terakhir masuk", "reason": "r"},
+        {"indicator": "q2", "status": "sebagian", "stage": "praktik", "quote": "yang paling awal masuk", "reason": "r"},
+        {"indicator": "q4", "status": "terpenuhi", "stage": "praktik", "quote": "karangan", "reason": "r"},
+    ]
+    g = {f["indicator"]: f for f in analyst.ground(raw, attempt)}
+    assert g["q1"]["stage"] == "praktik" and g["q1"]["status"] == "terpenuhi"
+    assert (g["q3"]["status"], g["q3"]["aiStatus"]) == ("ambigu", "terpenuhi")
+    assert g["q2"]["stage"] == "reverse_tutor"
+    assert g["q4"] == raw[3]  # tidak ada di transkrip: urusan pemverifikasi
+
+
+def test_empty_quote_is_only_valid_for_no_evidence():
+    attempt = {"code": "x", "explain": "", "dialog": [], "answers": []}
+    raw = [{"indicator": "q1", "status": "belum", "stage": "praktik", "quote": "", "reason": "tidak ada"},
+           {"indicator": "q2", "status": "terpenuhi", "stage": "praktik", "quote": " ", "reason": "r"}]
+    g = {f["indicator"]: f for f in analyst.ground(raw, attempt)}
+    assert g["q1"] == raw[0]
+    assert (g["q2"]["status"], g["q2"]["aiStatus"], g["q2"]["reason"]) == ("ambigu", "terpenuhi", analyst.NO_QUOTE)
+
+
+def test_analyst_prompt_carries_trap_correction_key(live, monkeypatch):
+    prompts = []
+    monkeypatch.setattr(llm, "complete_json", lambda kind, prompt, schema, max_tokens=1600: prompts.append(prompt))
+    attempt = {"code": "x", "explain": "", "dialog": [], "answers": []}
+    analyst.llm_findings(attempt, INDICATORS, {"correction_key": "Queue itu FIFO.", "indicator": "q3"})
+    assert "Queue itu FIFO." in prompts[0] and "q3" in prompts[0]
+
+
+def test_labeled_transcript_marks_speakers_trap_and_choice():
+    t = analyst.labeled_transcript({"code": "c", "explain": "e", "answers": ["a"], "dialog": [
+        {"who": "boby", "text": "x", "trap": True}, {"who": "mhs", "text": "y", "choice": "Setuju"}]})
+    assert "Boby (JEBAKAN): x" in t and "Mahasiswa (memilih Setuju): y" in t
+    assert t.index("[KODE MAHASISWA]") < t.index("[JAWABAN PENERAPAN MAHASISWA]")
 
 
 def test_analyst_retries_once_then_falls_back(client, student, live, monkeypatch):

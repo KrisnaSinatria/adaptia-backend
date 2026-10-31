@@ -25,6 +25,8 @@ services:
         generateValue: true
       - key: LLM_MODEL
         value: openai/gpt-oss-20b
+      - key: LLM_ANALYST_MODEL
+        value: openai/gpt-oss-120b
       - key: LLM_REASONING_EFFORT
         value: low
       - key: ALLOWED_ORIGINS
