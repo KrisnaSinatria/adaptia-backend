@@ -9,12 +9,14 @@ class Settings(BaseSettings):
 
     supabase_url: str = ""
     supabase_service_role_key: str = ""
-    anthropic_api_key: str = ""
+    groq_api_key: str = ""
     jwt_secret: str = ""
 
     llm_model: str = ""
     llm_mode: Literal["live", "scripted"] = "live"
     llm_timeout_seconds: float = 6.0
+    # Hanya untuk model penalaran (mis. openai/gpt-oss-*); kosongkan untuk model lain.
+    llm_reasoning_effort: Literal["", "low", "medium", "high"] = "low"
 
     allowed_origins: str = "http://localhost:5173"
     rate_limit_enabled: bool = True
@@ -25,7 +27,7 @@ class Settings(BaseSettings):
 
     @property
     def llm_live(self) -> bool:
-        return self.llm_mode == "live" and bool(self.anthropic_api_key) and bool(self.llm_model)
+        return self.llm_mode == "live" and bool(self.groq_api_key) and bool(self.llm_model)
 
 
 @lru_cache

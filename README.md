@@ -6,7 +6,7 @@ pemahaman yang dibaca dosen, kalimat demi kalimat.
 
 Prinsip: **AI mengusulkan, aturan memverifikasi, dosen memutuskan.** AI tidak pernah memberi nilai final.
 
-Stack: Python 3.10, FastAPI, Supabase (Postgres), Anthropic API. Dokumentasi interaktif ada di `/docs`.
+Stack: Python 3.10, FastAPI, Supabase (Postgres), Groq (model `openai/gpt-oss-20b`). Dokumentasi interaktif ada di `/docs`.
 
 ## Menjalankan (kurang dari 5 menit)
 
@@ -28,8 +28,8 @@ skrip dan analis memakai aturan kata kunci, dan setiap respons membawa `"mode": 
 ### Deploy
 
 `render.yaml` (Render Blueprint) membuat satu web service dengan URL HTTPS publik dan health check
-`/api/health`. Isi `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `LLM_MODEL`, dan
-`ALLOWED_ORIGINS` di dashboard; `JWT_SECRET` dibuat otomatis.
+`/api/health`. Isi `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, dan `ALLOWED_ORIGINS`
+di dashboard; `JWT_SECRET` dibuat otomatis, `LLM_MODEL` sudah terkunci di `render.yaml`.
 
 ## Arsitektur
 
@@ -141,8 +141,9 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 - Penjadwal jebakan: jebakan aktif pertama (urut id) yang indikatornya ada di rubrik sesi dan belum pernah
   diterima mahasiswa itu di sesi yang sama.
 - Miskonsepsi tercatat hanya bila mahasiswa memilih "Setuju" pada jebakan (diambil dari bank).
-- SDK Anthropic 2.x tidak lagi menerima parameter `temperature`; konsistensi analis dijaga lewat
-  keluaran JSON terstruktur, validasi skema, dan cache, bukan suhu rendah.
+- Penyedia LLM: Groq dengan `openai/gpt-oss-20b`, karena mendukung JSON schema strict (keluaran
+  analis dijamin cocok skema) dan cepat. Analis memakai suhu 0, Boby 0,7. Model ini model penalaran:
+  `LLM_REASONING_EFFORT=low` menjaga latensi, dan balasan kosong otomatis jatuh ke cadangan.
 - Kolom tambahan di luar skema awal: `students.prev`, `students.archetype`, `sessions.boby_script`,
   ringkasan statis sesi riwayat, `assignments.title`, `indicators.position`.
 - Penugasan di seed merujuk mahasiswa lewat nama; `seed.py` memetakannya ke id. Inisial diturunkan dari nama.
@@ -153,11 +154,12 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 ## AI Use and Third-Party Declaration
 
 **Penggunaan AI**
-- **Claude (Anthropic) di dalam produk**: model yang dikunci lewat `LLM_MODEL` berperan sebagai Boby
+- **GPT-OSS 20B (OpenAI, open-weight) lewat Groq di dalam produk**: model yang dikunci lewat
+  `LLM_MODEL` berperan sebagai Boby
   (pertanyaan lanjutan giliran 1 dan 3) dan sebagai analis bukti (menunjuk kutipan per indikator).
   Keluarannya selalu divalidasi kode dan diputuskan dosen; model tidak pernah memberi nilai final.
 - **Claude Code sebagai asisten coding**: membantu menulis kode backend, tes, dan dokumentasi ini.
   Tim meninjau, menjalankan tes, dan bertanggung jawab atas seluruh kode.
 
-**Pustaka pihak ketiga**: FastAPI, Uvicorn, Pydantic, pydantic-settings, supabase-py, Anthropic Python
-SDK, PyJWT, SlowAPI, HTTPX, pytest. Layanan: Supabase (Postgres), Anthropic API, Render.
+**Pustaka pihak ketiga**: FastAPI, Uvicorn, Pydantic, pydantic-settings, supabase-py, Groq Python SDK,
+PyJWT, SlowAPI, HTTPX, pytest. Layanan: Supabase (Postgres), Groq API, Render.

@@ -6,7 +6,7 @@ from pathlib import Path
 os.environ.update({
     "JWT_SECRET": "tes-rahasia-yang-cukup-panjang-untuk-hs256",
     "LLM_MODE": "scripted",
-    "ANTHROPIC_API_KEY": "",
+    "GROQ_API_KEY": "",
     "LLM_MODEL": "",
     "SUPABASE_URL": "",
     "SUPABASE_SERVICE_ROLE_KEY": "",

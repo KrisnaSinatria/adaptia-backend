@@ -20,7 +20,7 @@ INDICATORS = [
 def live(monkeypatch):
     s = get_settings()
     monkeypatch.setattr(s, "llm_mode", "live")
-    monkeypatch.setattr(s, "anthropic_api_key", "kunci-palsu")
+    monkeypatch.setattr(s, "groq_api_key", "kunci-palsu")
     monkeypatch.setattr(s, "llm_model", "model-tes")
 
 
@@ -155,15 +155,42 @@ def test_analyst_recovers_on_retry(client, student, live, monkeypatch):
     assert res.json()["analyst"] == "llm"
 
 
+def _fake_groq(create):
+    from types import SimpleNamespace
+    return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+
+
 def test_llm_call_timeout_returns_none(live, monkeypatch):
-    import anthropic
+    import groq
 
-    class Boom:
-        class messages:
-            @staticmethod
-            def create(**_):
-                raise anthropic.APITimeoutError(request=None)
+    def boom(**_):
+        raise groq.APITimeoutError(request=None)
 
-    monkeypatch.setattr(llm, "_client", lambda: Boom)
+    monkeypatch.setattr(llm, "_client", lambda: _fake_groq(boom))
     assert llm.complete_text("boby", "halo") is None
     assert llm.complete_json("analyst", "halo", {}) is None
+
+
+def test_analyst_request_uses_strict_schema_low_temperature_and_timeout(live, monkeypatch):
+    from types import SimpleNamespace
+    sent = {}
+
+    def create(**kwargs):
+        sent.update(kwargs)
+        msg = SimpleNamespace(content='{"findings": []}')
+        return SimpleNamespace(choices=[SimpleNamespace(message=msg)])
+
+    monkeypatch.setattr(llm, "_client", lambda: _fake_groq(create))
+    assert llm.complete_json("analyst", "halo", {"type": "object"}) == {"findings": []}
+    assert sent["response_format"]["json_schema"]["strict"] is True
+    assert sent["temperature"] == 0.0 and sent["timeout"] == 6.0 and sent["model"] == "model-tes"
+    assert sent["reasoning_effort"] == "low" and sent["include_reasoning"] is False
+
+
+def test_empty_model_reply_falls_back(client, student, live, monkeypatch):
+    # Model penalaran bisa menghabiskan token untuk berpikir dan membalas kosong; Boby harus jatuh ke skrip.
+    monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "")
+    from tests.test_api import PRACTICE, start
+    aid = start(client, student)
+    client.put(f"/api/attempts/{aid}/practice", headers=student, json=PRACTICE)
+    assert client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={}).json()["usedFallback"] is True

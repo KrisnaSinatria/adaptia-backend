@@ -19,11 +19,13 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
-      - key: ANTHROPIC_API_KEY
+      - key: GROQ_API_KEY
         sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: LLM_MODEL
-        sync: false
+        value: openai/gpt-oss-20b
+      - key: LLM_REASONING_EFFORT
+        value: low
       - key: ALLOWED_ORIGINS
         sync: false

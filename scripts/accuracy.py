@@ -1,6 +1,6 @@
 """Uji akurasi analis terhadap label dosen.
 
-    python -m scripts.accuracy seed/labeled.json            # analis LLM (butuh ANTHROPIC_API_KEY, LLM_MODEL)
+    python -m scripts.accuracy seed/labeled.json            # analis LLM (butuh GROQ_API_KEY, LLM_MODEL)
     python -m scripts.accuracy seed/labeled.json --fallback # pembanding: analis aturan kata kunci
 
 Format berkas (daftar penjelasan yang sudah dilabeli dosen, BUKAN lima arketipe karangan di data.ts):
