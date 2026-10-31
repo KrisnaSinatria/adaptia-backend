@@ -6,7 +6,10 @@ pemahaman yang dibaca dosen, kalimat demi kalimat.
 
 Prinsip: **AI mengusulkan, aturan memverifikasi, dosen memutuskan.** AI tidak pernah memberi nilai final.
 
-Stack: Python 3.10, FastAPI, Supabase (Postgres), Groq (model `openai/gpt-oss-20b`). Dokumentasi interaktif ada di `/docs`.
+Stack: Python 3.10, FastAPI, Supabase (Postgres), Groq (Boby: `openai/gpt-oss-20b`, analis:
+`openai/gpt-oss-120b`). Dokumentasi interaktif ada di `/docs`.
+
+Dokumen lain: [docs/API.md](docs/API.md) (kontrak untuk frontend) · [docs/QA.md](docs/QA.md) (hasil QA apa adanya).
 
 ## Menjalankan (kurang dari 5 menit)
 
@@ -21,6 +24,8 @@ cp .env.example .env                # isi nilainya
 2. Muat seed: `python -m app.seed`
 3. Jalankan: `uvicorn app.main:app --reload`, buka `http://localhost:8000/docs`.
 4. Tes: `pytest` (tanpa jaringan: DB palsu berisi seed asli, model selalu dipalsukan).
+5. Smoke test lewat HTTP seperti latihan demo: `python -m scripts.smoke http://localhost:8000 --rounds 3`
+   (memanggil `/demo/reset`, jadi data kembali ke seed).
 
 Tanpa internet atau tanpa kunci model: `LLM_MODE=scripted`. Seluruh alur tetap berjalan; Boby memakai
 skrip dan analis memakai aturan kata kunci, dan setiap respons membawa `"mode": "scripted"`.
@@ -29,7 +34,8 @@ skrip dan analis memakai aturan kata kunci, dan setiap respons membawa `"mode": 
 
 `render.yaml` (Render Blueprint) membuat satu web service dengan URL HTTPS publik dan health check
 `/api/health`. Isi `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, dan `ALLOWED_ORIGINS`
-di dashboard; `JWT_SECRET` dibuat otomatis, `LLM_MODEL` sudah terkunci di `render.yaml`.
+di dashboard; `JWT_SECRET` dibuat otomatis, `LLM_MODEL` dan `LLM_ANALYST_MODEL` sudah terkunci di
+`render.yaml`. Setelah live: `python -m scripts.smoke https://<url-render> --rounds 3 --pause 65`.
 
 ## Arsitektur
 
@@ -64,6 +70,23 @@ deterministik:
 Skor = rata-rata berbobot (terpenuhi 1, sebagian 0,5, belum 0, ambigu tidak dihitung), dibulatkan
 setengah ke atas seperti frontend. Tes emas (`tests/test_golden.py`) memastikan status, skor, dan
 ringkasan roster 35 mahasiswa sama persis dengan `src/lib/data.ts`.
+
+### Pagar pengaman AI (ditemukan lewat uji dengan model asli)
+
+Analis bukti, setelah model menjawab:
+1. Skema JSON strict, satu temuan per indikator. Gagal → ulang model analis → model Boby → aturan kata kunci.
+2. **Kutipan harus tulisan mahasiswa.** Kutipan dari ucapan Boby (termasuk pernyataan jebakan) turun ke
+   `ambigu`; klaim bukti tanpa kutipan juga `ambigu`. Tahap (`stage`) ditentukan dari letak kutipan.
+3. **Hasil jebakan dihitung aturan**: memilih "Setuju" berarti indikator jebakan `belum`, dengan balasan
+   mahasiswa sebagai kutipan. Usulan asli model selalu terlihat di `aiStatus`.
+4. Pemverifikasi kutipan (sama dengan frontend) sebelum skor.
+5. Prompt menerima kunci koreksi jebakan dan kunci soal penerapan sebagai bahan menilai; keduanya tidak
+   pernah dikirim ke mahasiswa.
+
+Boby ditolak (lalu memakai skrip yang cocok dengan kode mahasiswa, atau pertanyaan umum) bila: kosong,
+300 karakter atau lebih, lebih dari tiga kalimat, ada blok kode, memuat kunci koreksi, **menyebut fungsi
+jawaban yang belum ditulis mahasiswa** (mis. `popleft` kepada mahasiswa yang memakai `pop`), memakai frasa
+korektif ("seharusnya", "nggak pas", …), atau mengulang pertanyaan sebelumnya.
 
 ## Endpoint
 
@@ -121,8 +144,16 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 
 - **Login** adalah mode demo dengan dua akun tetap; bukan autentikasi.
 - **Data** seluruhnya fiktif (`seed/seed.json`, ekspor `data.ts`). Tidak ada data mahasiswa sungguhan.
-- **Rubrik sesi Queue dan isi bank jebakan** (`misconception`, `correction_key`, `indicator`) adalah
-  draf backend di `seed/drafts.json`, belum disetujui dosen. Jebakan Peluang belum punya indikator.
+- **Rubrik sesi Queue, isi bank jebakan** (`misconception`, `correction_key`, `indicator`), **dan kunci
+  soal penerapan** adalah draf backend di `seed/drafts.json`, belum disetujui dosen. Jebakan Peluang belum
+  punya indikator.
+- **Analis LLM belum diukur akurasinya** dan tidak sepenuhnya stabil: untuk jawaban serupa, skornya bisa
+  berbeda antar-percobaan (contoh dari QA: 70 dan 100). Cache membuat transkrip yang identik selalu
+  mendapat hasil sama, dan keputusan akhir tetap di dosen.
+- **Kuota Groq gratis**: 8.000 token/menit per model. Satu percobaan memakai beberapa ribu token, jadi
+  beberapa mahasiswa bersamaan dalam semenit akan memicu cadangan (alur tetap jalan, ditandai
+  `usedFallback`/`analyst: "fallback"`). Untuk demo dengan juri mencoba bersamaan, pertimbangkan tier berbayar.
+- **Rekomendasi kegiatan** memakai peta `need` dari `data.ts` yang baru memuat konsep Stack.
 - **Analis cadangan** adalah aturan kata kunci buatan backend, sengaja konservatif (status tertinggi
   "sebagian"). Pada data seed, kesepakatannya dengan status golden hanya sekitar sepertiga; ia jaring
   pengaman agar alur tidak mati, bukan pengganti analis LLM.
@@ -141,11 +172,15 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 - Penjadwal jebakan: jebakan aktif pertama (urut id) yang indikatornya ada di rubrik sesi dan belum pernah
   diterima mahasiswa itu di sesi yang sama.
 - Miskonsepsi tercatat hanya bila mahasiswa memilih "Setuju" pada jebakan (diambil dari bank).
-- Penyedia LLM: Groq dengan `openai/gpt-oss-20b`, karena mendukung JSON schema strict (keluaran
-  analis dijamin cocok skema) dan cepat. Analis memakai suhu 0, Boby 0,7. Model ini model penalaran:
-  `LLM_REASONING_EFFORT=low` menjaga latensi, dan balasan kosong otomatis jatuh ke cadangan.
+- Penyedia LLM: Groq. Boby memakai `openai/gpt-oss-20b` (cepat); analis memakai `openai/gpt-oss-120b`
+  karena pada uji asli lebih jarang memberi "terpenuhi" palsu, dan kuota token Groq dihitung per model
+  sehingga beban terbagi. Keduanya mendukung JSON schema strict. Analis memakai suhu 0, Boby 0,7.
+  Keduanya model penalaran: `LLM_REASONING_EFFORT=low` menjaga latensi.
+- Groq sesekali menolak JSON buatannya sendiri (`json_validate_failed`) walau strict, sekitar satu dari
+  beberapa panggilan analis 120b pada QA; urutan cadangan di atas menanganinya.
+- Archetype mahasiswa di seed hanya dipakai untuk percobaan seed; percobaan baru direkomendasikan dari statusnya.
 - Kolom tambahan di luar skema awal: `students.prev`, `students.archetype`, `sessions.boby_script`,
-  ringkasan statis sesi riwayat, `assignments.title`, `indicators.position`.
+  `sessions.penerapan_keys`, ringkasan statis sesi riwayat, `assignments.title`, `indicators.position`.
 - Penugasan di seed merujuk mahasiswa lewat nama; `seed.py` memetakannya ke id. Inisial diturunkan dari nama.
 - Hosting: Render, karena memberi URL HTTPS publik dan variabel lingkungan tanpa konfigurasi tambahan.
 - Prototipe frontend dibuat sebelum sprint; izin pemakaiannya masih dikonfirmasi ke panitia
@@ -154,10 +189,10 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 ## AI Use and Third-Party Declaration
 
 **Penggunaan AI**
-- **GPT-OSS 20B (OpenAI, open-weight) lewat Groq di dalam produk**: model yang dikunci lewat
-  `LLM_MODEL` berperan sebagai Boby
-  (pertanyaan lanjutan giliran 1 dan 3) dan sebagai analis bukti (menunjuk kutipan per indikator).
-  Keluarannya selalu divalidasi kode dan diputuskan dosen; model tidak pernah memberi nilai final.
+- **GPT-OSS 20B dan GPT-OSS 120B (OpenAI, open-weight) lewat Groq di dalam produk**: 20B (`LLM_MODEL`)
+  berperan sebagai Boby (pertanyaan lanjutan giliran 1 dan 3); 120B (`LLM_ANALYST_MODEL`) sebagai analis
+  bukti (menunjuk kutipan per indikator). Keluarannya selalu divalidasi kode dan diputuskan dosen; model
+  tidak pernah memberi nilai final.
 - **Claude Code sebagai asisten coding**: membantu menulis kode backend, tes, dan dokumentasi ini.
   Tim meninjau, menjalankan tes, dan bertanggung jawab atas seluruh kode.
 
