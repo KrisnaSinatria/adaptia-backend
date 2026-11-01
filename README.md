@@ -193,8 +193,6 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
   berperan sebagai Boby (pertanyaan lanjutan giliran 1 dan 3); 120B (`LLM_ANALYST_MODEL`) sebagai analis
   bukti (menunjuk kutipan per indikator). Keluarannya selalu divalidasi kode dan diputuskan dosen; model
   tidak pernah memberi nilai final.
-- **Claude Code sebagai asisten coding**: membantu menulis kode backend, tes, dan dokumentasi ini.
-  Tim meninjau, menjalankan tes, dan bertanggung jawab atas seluruh kode.
 
 **Pustaka pihak ketiga**: FastAPI, Uvicorn, Pydantic, pydantic-settings, supabase-py, Groq Python SDK,
 PyJWT, SlowAPI, HTTPX, pytest. Layanan: Supabase (Postgres), Groq API, Render.
