@@ -100,14 +100,19 @@ def boby_turn(request: Request, attempt_id: str, body: BobyTurnIn,
     indicator_ids = [i["id"] for i in repo.get_indicators(db, session["id"])]
     traps = repo.traps_for(db, indicator_ids)
     index = asked + 1
-    if index == boby.TRAP_TURN:
-        used = {t.get("trapId") for a in repo.list_attempts(db, session_id=session["id"], student_id=user["id"])
-                for t in a["dialog"] if t.get("trap")}
-        turn, used_fallback = boby.trap_turn(boby.pick_trap(traps, used), session), False
-    else:
-        keys = [t["correction_key"] for t in traps if t.get("correction_key")]
-        text, used_fallback = boby.ask(index, session, {**attempt, "dialog": dialog}, keys)
-        turn = {"who": "boby", "text": text, "time": boby.now_hhmm()}
+    try:
+        if index == boby.TRAP_TURN:
+            used = {t.get("trapId") for a in repo.list_attempts(db, session_id=session["id"], student_id=user["id"])
+                    for t in a["dialog"] if t.get("trap")}
+            turn, used_fallback = boby.trap_turn(boby.pick_trap(traps, used), session), False
+        else:
+            keys = [t["correction_key"] for t in traps if t.get("correction_key")]
+            text, used_fallback = boby.ask(index, session, {**attempt, "dialog": dialog}, keys)
+            turn = {"who": "boby", "text": text, "time": boby.now_hhmm()}
+    except boby.BobyUnavailable:
+        raise ApiError(503, "boby_unavailable", "Boby belum bisa merespons. Coba lagi sebentar.") from None
+    except boby.TrapMissing:
+        raise ApiError(409, "trap_missing", "Pernyataan uji untuk sesi ini belum tersedia. Hubungi dosen.") from None
     dialog.append(turn)
     repo.update_attempt(db, attempt_id, {"dialog": dialog})
     return {"turn": turn, "index": index, "done": False, "usedFallback": used_fallback, "mode": _mode()}

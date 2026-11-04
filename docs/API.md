@@ -125,8 +125,12 @@ Empat panggilan berurutan:
   pada panggilan berikutnya.
 - Balasan mahasiswa tidak dikembalikan di respons; frontend menambahkannya sendiri ke tampilan dialog
   (bentuknya `{ who: "mhs", text, choice?, time }` dan sudah tersimpan di server).
-- `usedFallback: true` berarti Boby memakai skrip karena model gagal, lambat (> 6 detik), atau menulis sesuatu
-  yang dilarang. `mode: "scripted"` berarti server sengaja berjalan tanpa LLM: **tampilkan penanda mode skrip**.
+- `usedFallback: true` hanya berlaku saat server sengaja memakai `LLM_MODE=scripted`; **tampilkan penanda mode skrip**.
+  Pada mode live, model yang gagal, timeout, atau menghasilkan pertanyaan tidak valid mengembalikan HTTP 503
+  dengan kode `boby_unavailable`, tanpa menyimpan giliran. Pertahankan draf dan tawarkan Coba lagi.
+- HTTP 409 `trap_missing` berarti pernyataan uji tidak tersedia dari bank maupun konfigurasi sesi. Giliran
+  mahasiswa belum disimpan; minta dosen memperbaiki sesi.
+- Jika koneksi putus tanpa respons HTTP yang jelas, ambil ulang `GET /attempts/:id` sebelum mengirim ulang.
 - Target latensi: di bawah 3 detik. Tampilkan indikator "Boby sedang berpikir"; jangan biarkan layar menggantung.
 
 ### `PUT /attempts/:id/application` (mahasiswa)

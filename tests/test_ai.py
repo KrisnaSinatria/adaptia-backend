@@ -120,15 +120,15 @@ def test_boby_uses_model_question_when_valid(client, student, live, monkeypatch)
     assert t1["turn"]["text"] == "Kenapa Ani keluar duluan?" and t1["usedFallback"] is False and t1["mode"] == "live"
 
 
-def test_boby_falls_back_when_model_leaks_correction_key(client, student, live, monkeypatch, db):
+def test_boby_returns_error_when_model_leaks_correction_key(client, student, live, monkeypatch, db):
     key = next(t for t in db.tables["traps"] if t["id"] == "t5")["correction_key"]
     monkeypatch.setattr(llm, "complete_text", lambda kind, prompt, max_tokens=200: key)
     from tests.test_api import PRACTICE, start
     aid = start(client, student)
     client.put(f"/api/attempts/{aid}/practice", headers=student, json=PRACTICE)
-    t1 = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={}).json()
-    script = next(s for s in db.tables["sessions"] if s["id"] == "antrean-queue")["boby_script"]
-    assert t1["usedFallback"] is True and t1["turn"]["text"] == script[0]
+    t1 = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={})
+    assert t1.status_code == 503 and t1.json()["error"]["code"] == "boby_unavailable"
+    assert next(a for a in db.tables["attempts"] if a["id"] == aid)["dialog"] == []
 
 
 def test_student_text_is_fenced_in_boby_prompt(client, student, live, monkeypatch):
@@ -160,7 +160,7 @@ def test_submit_with_model_verifies_quotes_and_caches(client, student, live, mon
         calls.append(kind)
         return _llm_answer(prompt, fake_quote_for="q2")
 
-    monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa?")
+    monkeypatch.setattr(llm, "complete_text", lambda _kind, prompt: "Apa alasanmu memilih itu?" if "Giliran ke: 3" in prompt else "Kenapa?")
     monkeypatch.setattr(llm, "complete_json", fake_json)
     _, res = submitted_attempt(client, student)
     body = res.json()
@@ -245,10 +245,70 @@ def test_agreeing_with_trap_is_decided_by_rule_not_model():
     assert analyst.apply_trap_rule(model, _trap_attempt("Tidak setuju"), trap) == model
 
 
-def test_boby_repeating_a_question_falls_back(live, monkeypatch):
+def test_boby_repeating_a_question_returns_error(live, monkeypatch):
     monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa pop?")
     session = {"boby_script": ["s1", "s2", "Undo pakai apa?"]}
-    assert boby.ask(3, session, _trap_attempt("Setuju"), []) == ("Undo pakai apa?", True)
+    with pytest.raises(boby.BobyUnavailable):
+        boby.ask(3, session, _trap_attempt("Setuju"), [])
+
+
+def test_third_question_uses_latest_student_reply(live, monkeypatch):
+    prompts = []
+
+    def answer(_kind, prompt):
+        prompts.append(prompt)
+        return "Kenapa kamu menyebut antrean berdasarkan urutan kedatangan?"
+
+    monkeypatch.setattr(llm, "complete_text", answer)
+    attempt = _trap_attempt("Tidak setuju")
+    attempt["dialog"][-1]["text"] = "Saya tidak setuju karena yang datang lebih dulu harus dilayani lebih dulu."
+    question, fallback = boby.ask(3, {"instruction": "Jelaskan antrean", "boby_script": []}, attempt, [])
+    assert question.startswith("Kenapa kamu menyebut antrean") and fallback is False
+    assert "Tidak setuju" in prompts[0]
+    assert attempt["dialog"][-1]["text"] in prompts[0]
+    assert "Fokus: ajukan pertanyaan lanjutan" in prompts[0]
+
+
+@pytest.mark.parametrize("model_reply", [None, "Seharusnya pakai queue.", "Kenapa pop?"])
+def test_live_boby_rejects_failed_or_invalid_model_reply(live, monkeypatch, model_reply):
+    monkeypatch.setattr(llm, "complete_text", lambda *_args, **_kwargs: model_reply)
+    with pytest.raises(boby.BobyUnavailable):
+        boby.ask(3, {"boby_script": ["contoh 1", "jebakan", "contoh 3"]}, _trap_attempt("Setuju"), [])
+
+
+def test_live_boby_retries_rejected_question_once(live, monkeypatch, caplog):
+    replies = iter(["Seharusnya pakai queue.", "Kenapa kamu memilih urutan itu?"])
+    calls = []
+
+    def complete(_kind, prompt):
+        calls.append(prompt)
+        return next(replies)
+
+    monkeypatch.setattr(llm, "complete_text", complete)
+    question, fallback = boby.ask(3, {"boby_script": []}, _trap_attempt("Setuju"), [])
+    assert question == "Kenapa kamu memilih urutan itu?" and fallback is False
+    assert len(calls) == 2
+    assert "Pertanyaan sebelumnya tidak dapat dipakai" in calls[1]
+    assert "reason=correction" in caplog.text
+    assert "Seharusnya pakai queue" not in caplog.text
+
+
+def test_live_boby_stops_after_second_rejected_question(live, monkeypatch):
+    calls = []
+
+    def complete(_kind, _prompt):
+        calls.append(1)
+        return "Seharusnya pakai queue."
+
+    monkeypatch.setattr(llm, "complete_text", complete)
+    with pytest.raises(boby.BobyUnavailable):
+        boby.ask(3, {"boby_script": []}, _trap_attempt("Setuju"), [])
+    assert len(calls) == 2
+
+
+def test_trap_turn_requires_nonempty_statement():
+    with pytest.raises(boby.TrapMissing):
+        boby.trap_turn(None, {"boby_script": ["satu", "   "]})
 
 
 def test_labeled_transcript_marks_speakers_trap_and_choice():
@@ -260,7 +320,7 @@ def test_labeled_transcript_marks_speakers_trap_and_choice():
 
 def test_analyst_retries_once_then_falls_back(client, student, live, monkeypatch):
     calls = []
-    monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa?")
+    monkeypatch.setattr(llm, "complete_text", lambda _kind, prompt: "Apa alasanmu memilih itu?" if "Giliran ke: 3" in prompt else "Kenapa?")
     monkeypatch.setattr(llm, "complete_json", lambda *a, **k: calls.append(1) or {"findings": []})
     _, res = submitted_attempt(client, student)
     assert res.json()["analyst"] == "fallback" and len(calls) == 2
@@ -277,7 +337,7 @@ def test_analyst_tries_analyst_model_twice_then_boby_model(live, monkeypatch):
 
 def test_analyst_recovers_on_retry(client, student, live, monkeypatch):
     answers = iter([None])
-    monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "Kenapa?")
+    monkeypatch.setattr(llm, "complete_text", lambda _kind, prompt: "Apa alasanmu memilih itu?" if "Giliran ke: 3" in prompt else "Kenapa?")
     monkeypatch.setattr(llm, "complete_json",
                         lambda kind, prompt, schema, max_tokens=1600, model=None: next(answers, _llm_answer(prompt)))
     _, res = submitted_attempt(client, student)
@@ -316,10 +376,11 @@ def test_analyst_request_uses_strict_schema_low_temperature_and_timeout(live, mo
     assert sent["reasoning_effort"] == "low" and sent["include_reasoning"] is False
 
 
-def test_empty_model_reply_falls_back(client, student, live, monkeypatch):
-    # Model penalaran bisa menghabiskan token untuk berpikir dan membalas kosong; Boby harus jatuh ke skrip.
+def test_empty_model_reply_returns_error(client, student, live, monkeypatch):
+    # Model penalaran bisa menghabiskan token untuk berpikir dan membalas kosong; jangan tampilkan skrip diam-diam.
     monkeypatch.setattr(llm, "complete_text", lambda *a, **k: "")
     from tests.test_api import PRACTICE, start
     aid = start(client, student)
     client.put(f"/api/attempts/{aid}/practice", headers=student, json=PRACTICE)
-    assert client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={}).json()["usedFallback"] is True
+    response = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={})
+    assert response.status_code == 503 and response.json()["error"]["code"] == "boby_unavailable"

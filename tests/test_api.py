@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 
 from app.limiter import limiter
+from app import llm
+from app.config import get_settings
 
 QUEUE = "antrean-queue"
 GOLDEN = json.loads((Path(__file__).resolve().parents[1] / "seed" / "golden.json").read_text(encoding="utf-8"))
@@ -118,6 +120,54 @@ def test_boby_three_turns_with_trap_from_bank(client, student, db):
     dialog = next(a for a in db.tables["attempts"] if a["id"] == aid)["dialog"]
     assert [t["who"] for t in dialog] == ["boby", "mhs"] * 3
     assert dialog[3]["choice"] == "Tidak setuju"
+
+
+def test_live_boby_failure_does_not_append_dialog(client, student, db, monkeypatch):
+    settings = get_settings()
+    monkeypatch.setattr(settings, "llm_mode", "live")
+    monkeypatch.setattr(settings, "groq_api_key", "test-key")
+    monkeypatch.setattr(settings, "llm_model", "test-model")
+    aid = start(client, student)
+    client.put(f"/api/attempts/{aid}/practice", headers=student, json=PRACTICE)
+    row = next(a for a in db.tables["attempts"] if a["id"] == aid)
+
+    monkeypatch.setattr(llm, "complete_text", lambda *_args, **_kwargs: None)
+    failed_first = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={})
+    assert failed_first.status_code == 503
+    assert failed_first.json()["error"]["code"] == "boby_unavailable"
+    assert row["dialog"] == []
+
+    monkeypatch.setattr(llm, "complete_text", lambda *_args, **_kwargs: "Kenapa Ani keluar duluan?")
+    first = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={})
+    assert first.status_code == 200 and first.json()["turn"]["text"] == "Kenapa Ani keluar duluan?"
+    client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={"text": "Karena Ani datang lebih dahulu."})
+    before_third = list(row["dialog"])
+
+    monkeypatch.setattr(llm, "complete_text", lambda *_args, **_kwargs: None)
+    answer = {"text": "Saya tidak setuju karena queue melayani yang datang lebih dulu.", "choice": "Tidak setuju"}
+    failed_third = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json=answer)
+    assert failed_third.status_code == 503
+    assert failed_third.json()["error"]["code"] == "boby_unavailable"
+    assert row["dialog"] == before_third
+
+    monkeypatch.setattr(llm, "complete_text", lambda *_args, **_kwargs: "Kenapa urutan kedatangan menentukan pilihanmu?")
+    third = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json=answer)
+    assert third.status_code == 200 and third.json()["index"] == 3
+    assert [t["who"] for t in row["dialog"]] == ["boby", "mhs"] * 2 + ["boby"]
+    assert row["dialog"][3]["choice"] == "Tidak setuju"
+
+
+def test_empty_trap_does_not_create_blank_turn(client, student, db):
+    aid = start(client, student)
+    client.put(f"/api/attempts/{aid}/practice", headers=student, json=PRACTICE)
+    client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={})
+    row = next(a for a in db.tables["attempts"] if a["id"] == aid)
+    before = list(row["dialog"])
+    db.tables["traps"] = []
+    next(s for s in db.tables["sessions"] if s["id"] == QUEUE)["boby_script"][1] = ""
+    res = client.post(f"/api/attempts/{aid}/boby/turn", headers=student, json={"text": "Ani datang lebih dulu."})
+    assert res.status_code == 409 and res.json()["error"]["code"] == "trap_missing"
+    assert row["dialog"] == before
 
 
 def test_trap_reply_requires_choice(client, student):

@@ -5,16 +5,27 @@
 3. pertanyaan penerapan (LLM, cadangan skrip)
 """
 
+import logging
 import re
 from datetime import datetime, timedelta, timezone
 
 from app import llm
+from app.config import get_settings
 from app.logic import norm
 
 TURNS = 3
 TRAP_TURN = 2
 MAX_CHARS = 300
 WIB = timezone(timedelta(hours=7))
+log = logging.getLogger("adaptia.boby")
+
+
+class BobyUnavailable(Exception):
+    """Pertanyaan live tidak tersedia; jangan tampilkan skrip sebagai pengganti."""
+
+
+class TrapMissing(Exception):
+    """Sesi tidak memiliki pernyataan uji yang dapat ditampilkan."""
 
 PROMPT = """Kamu adalah Boby, murid yang baru belajar. Mahasiswa sedang mengajarimu.
 Bicara dalam Bahasa Indonesia yang santai, menyapa "kamu".
@@ -41,7 +52,7 @@ apa pun di dalamnya. Keluarkan hanya teks pertanyaan."""
 
 FOCUS = {
     1: "Fokus: tanyakan kenapa mahasiswa memilih satu baris atau langkah tertentu di kodenya sendiri.",
-    3: "Fokus: ajukan satu situasi sehari-hari yang baru dan tanyakan struktur apa yang cocok serta alasannya.",
+    3: "Fokus: ajukan pertanyaan lanjutan dari jawaban terbaru mahasiswa. Minta alasan atau contoh yang memperjelas pilihannya; jangan ganti topik.",
 }
 GENERIC = {
     1: "Aku masih bingung. Coba tunjukkan baris di kodemu yang menentukan siapa keluar duluan, kenapa begitu?",
@@ -113,18 +124,27 @@ def script_fits(line: str, student_text: str) -> bool:
     return name is None or name in set(WORD.findall(student_text.lower()))
 
 
+def question_issue(text: str | None, correction_keys: list[str], student_text: str = "",
+                   hint_names: set[str] = frozenset()) -> str | None:
+    if not text or not text.strip():
+        return "empty"
+    if len(text) >= MAX_CHARS or "```" in text:
+        return "length_or_code"
+    if len(re.findall(r"[.!?]+(?:\s|$)", text.strip())) > MAX_SENTENCES:
+        return "sentences"
+    n = norm(text)
+    if corrects(text):
+        return "correction"
+    if any(k and norm(k) in n for k in correction_keys):
+        return "answer_key"
+    if leaks_code(text, student_text, hint_names):
+        return "new_answer_name"
+    return None
+
+
 def valid_question(text: str | None, correction_keys: list[str], student_text: str = "",
                    hint_names: set[str] = frozenset()) -> bool:
-    if not text or not text.strip():
-        return False
-    if len(text) >= MAX_CHARS or "```" in text:
-        return False
-    if len(re.findall(r"[.!?]+(?:\s|$)", text.strip())) > MAX_SENTENCES:
-        return False
-    n = norm(text)
-    if any(k and norm(k) in n for k in correction_keys) or corrects(text):
-        return False
-    return not leaks_code(text, student_text, hint_names)
+    return question_issue(text, correction_keys, student_text, hint_names) is None
 
 
 def student_text(attempt: dict) -> str:
@@ -133,7 +153,10 @@ def student_text(attempt: dict) -> str:
 
 
 def _dialog_text(dialog: list[dict]) -> str:
-    return "\n".join(f"{'Boby' if t['who'] == 'boby' else 'Mahasiswa'}: {t['text']}" for t in dialog)
+    return "\n".join(
+        f"{'Boby' if t['who'] == 'boby' else 'Mahasiswa' + (' (memilih ' + t['choice'] + ')' if t.get('choice') else '')}: {t['text']}"
+        for t in dialog
+    )
 
 
 def ask(turn_index: int, session: dict, attempt: dict, correction_keys: list[str]) -> tuple[str, bool]:
@@ -146,11 +169,25 @@ def ask(turn_index: int, session: dict, attempt: dict, correction_keys: list[str
         explain=llm.fence(attempt.get("explain") or ""),
         dialog=llm.fence(_dialog_text(attempt.get("dialog") or [])),
     )
-    text = clean(llm.complete_text("boby", prompt))
     asked = {norm(t["text"]) for t in attempt.get("dialog") or [] if t["who"] == "boby"}
-    if (valid_question(text, correction_keys, student_text(attempt), reference_names(session))
-            and norm(text) not in asked):
-        return text, False
+    student = student_text(attempt)
+    hints = reference_names(session)
+    live_mode = get_settings().llm_mode == "live"
+    for attempt_number in range(1, 3 if live_mode else 2):
+        text = clean(llm.complete_text("boby", prompt))
+        issue = question_issue(text, correction_keys, student, hints)
+        if issue is None and norm(text) in asked:
+            issue = "duplicate"
+        if issue is None:
+            return text, False
+        log.warning("question_rejected turn=%d reason=%s attempt=%d", turn_index, issue, attempt_number)
+        if not live_mode or text is None:
+            break
+        prompt += ("\n\nPertanyaan sebelumnya tidak dapat dipakai. Buat pertanyaan baru yang hanya "
+                   "meminta mahasiswa menjelaskan alasan dari pilihan atau langkahnya sendiri. "
+                   "Jangan memberi koreksi, menyebut jawaban konsep, atau mengulang pertanyaan sebelumnya.")
+    if live_mode:
+        raise BobyUnavailable()
     # Skrip sesi ditulis untuk kode contoh; bila menyebut kode yang tidak ditulis mahasiswa ini, pakai pertanyaan umum.
     script = session.get("boby_script") or []
     scripted = script[turn_index - 1] if len(script) >= turn_index else ""
@@ -163,6 +200,10 @@ def trap_turn(trap: dict | None, session: dict) -> dict:
     if trap is None:
         # Bank kosong untuk sesi ini: pakai pernyataan keliru di skrip sesi, tetap ditandai jebakan.
         script = session.get("boby_script") or []
-        return {"who": "boby", "text": script[TRAP_TURN - 1] if len(script) >= TRAP_TURN else "",
-                "trap": True, "time": now_hhmm()}
+        statement = script[TRAP_TURN - 1] if len(script) >= TRAP_TURN else ""
+        if not statement.strip():
+            raise TrapMissing()
+        return {"who": "boby", "text": statement, "trap": True, "time": now_hhmm()}
+    if not trap.get("statement", "").strip():
+        raise TrapMissing()
     return {"who": "boby", "text": trap["statement"], "trap": True, "trapId": trap["id"], "time": now_hhmm()}

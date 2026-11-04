@@ -27,8 +27,10 @@ cp .env.example .env                # isi nilainya
 5. Smoke test lewat HTTP seperti latihan demo: `python -m scripts.smoke http://localhost:8000 --rounds 3`
    (memanggil `/demo/reset`, jadi data kembali ke seed).
 
-Tanpa internet atau tanpa kunci model: `LLM_MODE=scripted`. Seluruh alur tetap berjalan; Boby memakai
-skrip dan analis memakai aturan kata kunci, dan setiap respons membawa `"mode": "scripted"`.
+Untuk demo tanpa internet, pilih `LLM_MODE=scripted` secara eksplisit. Boby memakai skrip dan analis
+memakai aturan kata kunci; respons membawa `"mode": "scripted"`. Pada `LLM_MODE=live`, kegagalan Groq
+tidak mengubah pertanyaan Boby menjadi skrip. API mengembalikan `503 boby_unavailable` agar mahasiswa
+dapat mencoba lagi tanpa kehilangan jawabannya.
 
 ### Deploy
 
@@ -45,7 +47,7 @@ Frontend (React + Vite)
    ▼
 FastAPI  /api/*
    ├─ routers/       tipis: validasi, peran, urutan alur
-   ├─ boby.py        penjadwal jebakan (aturan) + pertanyaan Boby (LLM, cadangan skrip)
+   ├─ boby.py        penjadwal jebakan (aturan) + pertanyaan Boby (LLM live; skrip hanya mode scripted)
    ├─ analyst.py     analis bukti (LLM JSON, cadangan aturan kata kunci) + cache SHA-256
    ├─ logic.py       MURNI: verify_quote, score_of, transcript_of, roster, rekomendasi
    ├─ llm.py         satu pintu ke model: batas waktu 6 detik, tanpa retry otomatis, log latensi
@@ -83,10 +85,12 @@ Analis bukti, setelah model menjawab:
 5. Prompt menerima kunci koreksi jebakan dan kunci soal penerapan sebagai bahan menilai; keduanya tidak
    pernah dikirim ke mahasiswa.
 
-Boby ditolak (lalu memakai skrip yang cocok dengan kode mahasiswa, atau pertanyaan umum) bila: kosong,
+Boby ditolak bila: kosong,
 300 karakter atau lebih, lebih dari tiga kalimat, ada blok kode, memuat kunci koreksi, **menyebut fungsi
 jawaban yang belum ditulis mahasiswa** (mis. `popleft` kepada mahasiswa yang memakai `pop`), memakai frasa
-korektif ("seharusnya", "nggak pas", …), atau mengulang pertanyaan sebelumnya.
+korektif ("seharusnya", "nggak pas", …), atau mengulang pertanyaan sebelumnya. Dalam mode live penolakan
+tersebut menghasilkan `503 boby_unavailable`; fallback skrip/pertanyaan umum hanya berlaku pada mode
+scripted. Giliran 3 menerima riwayat dialog termasuk pilihan Setuju/Tidak setuju dan alasan terbaru.
 
 ## Endpoint
 
@@ -114,6 +118,11 @@ Semua di bawah `/api`, JSON camelCase seperti `data.ts`. Galat: `{ "error": { "c
 
 Tiap temuan di respons membawa `status` (setelah pemverifikasi), `aiStatus` (usulan asli model), dan
 `verified`, supaya dosen melihat kutipan yang ditolak pemverifikasi.
+
+Pada endpoint giliran Boby, `503 boby_unavailable` berarti panggilan live gagal atau pertanyaannya
+ditolak validasi; giliran tersebut belum disimpan dan aman dicoba lagi. `409 trap_missing` berarti bank
+dan skrip sesi tidak menyediakan pernyataan uji; perbaiki konfigurasi sesi. Jika respons jaringan hilang
+tanpa status HTTP, baca ulang percobaan sebelum mengirim ulang agar jawaban tidak tercatat dua kali.
 
 Batas laju per token: 120/menit umum, 20/menit untuk giliran Boby dan submit, 5/menit untuk reset.
 Masukan dibatasi 4.000 karakter per jawaban.
@@ -150,16 +159,17 @@ dan angka hanya boleh disebut beserta jumlah sampelnya setelah skrip dijalankan.
 - **Analis LLM belum diukur akurasinya** dan tidak sepenuhnya stabil: untuk jawaban serupa, skornya bisa
   berbeda antar-percobaan (contoh dari QA: 70 dan 100). Cache membuat transkrip yang identik selalu
   mendapat hasil sama, dan keputusan akhir tetap di dosen.
-- **Kuota Groq gratis**: 8.000 token/menit per model. Satu percobaan memakai beberapa ribu token, jadi
-  beberapa mahasiswa bersamaan dalam semenit akan memicu cadangan (alur tetap jalan, ditandai
-  `usedFallback`/`analyst: "fallback"`). Untuk demo dengan juri mencoba bersamaan, pertimbangkan tier berbayar.
+- **Kuota Groq** dapat membatasi beberapa mahasiswa yang mencoba bersamaan. Giliran Boby live yang
+  terkena batas akan mengembalikan `boby_unavailable` dan dapat dicoba ulang. Analis masih memiliki
+  fallback yang ditandai `analyst: "fallback"`.
 - **Rekomendasi kegiatan** memakai peta `need` dari `data.ts` yang baru memuat konsep Stack.
 - **Analis cadangan** adalah aturan kata kunci buatan backend, sengaja konservatif (status tertinggi
   "sebagian"). Pada data seed, kesepakatannya dengan status golden hanya sekitar sepertiga; ia jaring
   pengaman agar alur tidak mati, bukan pengganti analis LLM.
 - **Ringkasan** temuan dibuat aturan dari status per indikator, bukan oleh model.
 - **Riwayat sesi** selain `operasi-stack` hanya ringkasan statis dari seed (tanpa percobaan per mahasiswa).
-- Belum dikerjakan (P2): suara/STT, sinyal tempel teks, Peta Kelas langsung.
+- Belum dikerjakan (P2): STT server, sinyal tempel teks, Peta Kelas langsung. Frontend demo memakai
+  pengenalan suara Chrome untuk mengisi teks jawaban Boby; mikrofon perlu diuji di browser pengguna.
 
 ## Asumsi yang dicatat
 
