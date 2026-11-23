@@ -1,6 +1,6 @@
 # ADAPTIA Backend
 
-API untuk ADAPTIA (Hackathon INCEPTION 2026, subtema 1 *Inclusive Education and Future Skills*).
+API untuk ADAPTIA 
 Mahasiswa mengajari **Boby**, murid AI yang sengaja keliru; cara mereka membetulkannya menjadi bukti
 pemahaman yang dibaca dosen, kalimat demi kalimat.
 
